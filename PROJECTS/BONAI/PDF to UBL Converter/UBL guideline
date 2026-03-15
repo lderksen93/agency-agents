@@ -1,0 +1,263 @@
+
+Opbouw UBL Factuur, factuurregels (InvoiceLine)
+Een factuurregel kan een bijzonder uitgebreid aantal elementen bevatten, waarvan de meeste elementen optioneel zijn.
+Minimaal 1 factuurregel is verplicht.
+
+[1..*] InvoiceLine; factuurregel.
+
+A. Gebruikelijk per factuurregel is:
+
+[1..1] ID; Factuurregelnummer (ID); een zelf te bepalen volgnummer per factuur. 
+
+[1..1] InvoicedQuantity; aantal c.q. hoeveelheid dat gefactureerd wordt (minimaal "1"). Met aanduiding via unitCode (verplicht).
+
+[1..1] LineExtensionAmount;het te factureren regelbedrag. Met currencyID; valuta aanduiding, meestal "EUR"
+
+PEPPOL BIS
+Het bedrag is "netto" zonder btw. Maar wel inclusief toeslagen en heffingen op regelniveau en andere relevante belastingen. Moet worden afgerond op maximaal 2 decimalen.
+
+[1..1] Item; naam van artikel of dienst die gefactureerd wordt.
+Met de elementen: 
+ - [1..1] Name; Naam item.
+ - [1..*] ClassifiedTaxCategory; BTW categorie.
+   [1..1] EU-N
+    Met de elementen:
+    - [0..1] ID; BTW code . in de meeste gevallen de "S" van Standard. Zie uitleg UBL en BTW.
+      [1..1] PEPPOL
+    - [0..1] Percent; BTW percentage.
+    - [1..1] TaxScheme; aanduiding BTW
+                [0..1] ID;
+                [1..1] EU-N
+               
+                PEPPOL BIS
+                Altijd invullen "VAT". Zie uitleg UBL en BTW.
+
+[0..1] Price; Prijs per eenheid (stuksprijs).
+[1..1] EU-N
+Met de elementen:
+- [1..1] PriceAmount; Prijs. Met currencyID (verplicht); valuta aanduiding, meestal "EUR".
+ 
+  PEPPOL BIS
+  De prijs van een artikel, exclusief btw, na aftrek van artikelprijskorting.
+  Deze prijs van het artikel moet gelijk zijn aan de brutoprijs van het artikel minus de korting op de artikelprijs, als beide zijn
+  opgegeven.
+  Artikelprijs mag niet negatief zijn.
+
+- [0..1] BaseQuantity; hoeveelheid (eenheid) waarop de prijs gebaseerd is. Met optioneel unitCode.
+
+  PEPPOL BIS
+  Deze hoeveelheid moet altijd positief zijn.  
+  Toelichting unitCode:
+  Artikelprijs basishoeveelheid maateenheidcode.
+  De maateenheid die van toepassing is op de basishoeveelheid Artikelprijs, moet dezelfde zijn als de eenheidscode van de
+  gefactureerde / gecrediteerde hoeveelheid.  
+B. Andere extra elementen zijn:
+
+[0..*] Note; Notitie.
+
+[0..1] AccountingCost; Boekingsinformatie.
+
+NLCIUS:
+Toelichting:
+Referentienummer uit het referentiegrootboekschema, tenzij de afnemer een ander grootboekrekeningnummer heeft doorgegeven aan de leverancier. Met name gebruiken als er geen ordernummer/regelnummer bekend is.
+
+UBL Ketentest:
+Zie ook gebruik relatie naar Referentie Grootboekschema (RGS) te leggen op het niveau van factuurregel.
+   
+[0..*] InvoicePeriod; periode waarop factuur gebaseerd is.
+        [0..1]StartDate; als JJJJ-MM-DD
+        [0..1]EndDate; als JJJJ-MM-DD
+
+PEPPOL BIS
+Deze start- en einddatum per factuurregel moeten vallen binnen de periode op factuurniveau.
+
+[0..*] OrderLineReference; verwijzing naar orderregel.
+[0..1] EU-N
+Met element:
+- [1..1] LineID; Orderregel
+. 
+PEPPOL BIS
+Een identificator voor een regel waarnaar wordt verwezen in een inkooporder, uitgegeven door de koper.
+Zie UBL Verwijzing naar orders, orderregels en pakbonnen.
+ 
+NLCIUS (BR-NL-13)
+Als een orderregel is gevuld moet ook het inkoopordernummer gevuld zijn.
+
+[0..*] DocumentReference; Document referentie waarop de factuurregel is gebaseerd; 
+[0..1] EU-N
+Met de elementen:
+- [1..1] ID; met verwijzing naar SchemeID (optioneel).
+
+PEPPOL BIS
+Een identifier voor een object waarop de factuurregel is gebaseerd, afgegeven door de verkoper.
+- [0..1] DocumentTypeCode. 
+  [1..1] PEPPOL.
+
+PEPPOL BIS
+Code 130 toepassen voor verwijzing naar een factuurobject.
+    
+[0..*] AllowanceCharge; Toeslag c.q. korting per factuurregel.
+Met de elementen:
+- [1..1] ChargeIndicator; bepaalt of sprake is van een toeslag of een korting.
+         Toeslag = true, korting = false. Zie ook de toelichting bij toeslag/korting op factuurniveau.
+- [0..1] AllowanceChargeReasonCode; Reden van korting of toeslag. 
+
+           NLCIUS (BR-NL-32)      
+           Deze code wordt afgeraden.
+
+- [0..1] AllowanceChargeReason; toelichting c.q. omschrijving korting of toeslag.
+- [0..1] MultiplierFactorNumeric; rekenfactor voor het basisbedrag.
+           Basisbedrag maal Rekenfactor / 100 = Amount (toeslag/korting), zie hierna.
+- [1..1] Amount; bedrag van de korting of toeslag. Met currencyID (verplicht); valuta aanduiding, meestal "EUR".
+- [0..1] BaseAmount; basisbedrag voor de korting of toeslag. Met [1..1] currencyID; valuta aanduiding, meestal "EUR".
+   
+Aanvullende gegevens Item (artikel/dienst) 
+[0..*] Description; omschrijving van het artikel of de dienst,
+[0..1] PEPPOL
+[0..1] BuyersItemIdentification; nadere identificatie artikel/dienst door afnemer.
+         [1..1] ID;
+[0..1] SellersItemIdentification; nadere identificatie artikel/dienst door leverancier. 
+         [1..1] ID
+.
+[0..1] StandardItemIdentification; 
+         [1..1] ID; met [1..1] SchemeID (verplicht) volgens ISO 6523. Zie standaard codelijsten.
+         Dit element is bedoeld voor het identificeren van een item op basis van een gestandardiseerd artikelnummering systeem. 
+         Voorbeelden zijn:
+         - ISBN voor boeken en media
+         - GTIN algemeen
+         - De pharmaceutische industrie, de bloemen- en planten en andere sectoren.      
+
+[0..1] OriginCountry; Land van oorsprong.
+         [1..1] IdentificationCode; landcode.
+
+[0..*] CommodityClassification; Bulkgoed. 
+Met element:
+[1..1] ItemClassificationCode; Met verplicht listID en optioneel listVersionID.
+
+[0..*] AdditionalItemProperty; aanvullende eigenschap.
+Met de elementen:
+- [1..1] Name; naam.
+- [0..1] Value; waarde.
+  [1..1] PEPPOL.
+
+Aanvullende gegevens prijs (Price). 
+[0..*] AllowanceCharge; toeslag/korting op de prijs.
+[1..1] PEPPOL
+Met de elementen:
+- [1..1] ChargeIndicator; Toeslag = true, korting = false.
+
+  PEPPOL BIS
+  Alleen "false" toegestaan, oftewel korting op de prijs. 
+- [1..1] Amount; bedrag van de korting of toeslag. Met currencyID (verplicht); valuta aanduiding, meestal "EUR". 
+
+- [0..1] BaseAmount; basisbedrag voor de korting of toeslag. Met currencyID (verplicht); valuta aanduiding, meestal "EUR".  
+
+  PEPPOL BIS
+  De eenheidsprijs, exclusief btw, vóór aftrek van artikelprijskorting, mag niet negatief zijn.
+
+Uitgewerkt voor een factuur volgens UBLNL is dit als volgt:
+Voorbeeld kort per factuurregel (A1 t/m A5):
+
+<cac:InvoiceLine>
+    <cbc:ID>5</cbc:ID> 
+    <cbc:InvoicedQuantity unitCode="ZZ">1.00</cbc:InvoicedQuantity> 
+    <cbc:LineExtensionAmount currencyID="EUR">50.00</cbc:LineExtensionAmount>
+
+<cac:Item>
+   <cbc:Name>Factureren in UBL</cbc:Name>
+   <cac:ClassifiedTaxCategory>
+       <cbc:ID>S</cbc:ID>
+       <cbc:Percent>21.00</cbc:Percent>
+           <cac:TaxScheme>
+               <cbc:ID>VAT</cbc:ID>
+           </cac:TaxScheme>
+   </cac:ClassifiedTaxCategory>
+</cac:Item>
+
+<cac:Price>
+   <cbc:PriceAmount currencyID="EUR">200.00</cbc:PriceAmount>
+   <cbc:BaseQuantity unitCode="ZZ">1.00</cbc:BaseQuantity>
+</cac:Price>
+
+</cac:InvoiceLine>
+
+Voorbeeld met vele mogelijke elementen per factuurregel (B1 t/m B8):
+
+<cac:InvoiceLine>
+   <cbc:ID>5</cbc:ID> 
+   <cbc:Note>[Note]</cbc:Note> 
+   <cbc:InvoicedQuantity unitCode="ZZ">1.00</cbc:InvoicedQuantity>  
+   <cbc:LineExtensionAmount currencyID="EUR">50.00</cbc:LineExtensionAmount>  
+ 
+   B.2 Boekingsinformatie
+   <cbc:AccountingCost>RGScode Vakliteratuur</cbc:AccountingCost>      
+
+   B.3 Periode
+   <cac:InvoicePeriod>
+      <cbc:StartDate>2015-02-16</cbc:StartDate>
+      <cbc:EndDate>2015-02-16</cbc:EndDate>
+   </cac:InvoicePeriod>
+
+   B.4 Orderregel verwijzing
+   <cac:OrderLineReference> 
+       <cbc:LineID>1</cbc:LineID>
+   </cac:OrderLineReference>
+
+   B.5 Documentreferentie
+   <cac:DocumentReference>
+        <cbc:ID>Identificatie gefactureerd object door verkoper</cbc:ID>
+        <cbc:DocumentTypeCode>ATS</cbc:DocumentTypeCode>
+   </cac:DocumentReference>   
+
+   B.6 Toeslagen/korting
+   <cac:AllowanceCharge>
+       <cbc:ChargeIndicator>false</cbc:ChargeIndicator>
+       <cbc:AllowanceChargeReasonCode>ZZZ</cbc:AllowanceChargeReasonCode> 
+       <cbc:AllowanceChargeReason>[Reason]</cbc:AllowanceChargeReason>    
+       <cbc:MultiplierFactorNumeric>1</cbc:MultiplierFactorNumeric>
+       <cbc:Amount currencyID="EUR">[bedrag]</cbc:Amount> 
+       <cbc:BaseAmount currencyID="EUR">100</cbc:BaseAmount>
+    </cac:AllowanceCharge>
+
+   B.7 Item (artikel/dienst)
+   <cac:Item>
+       <cbc:Description>Boek De digitale snelweg</cbc:Description>
+       <cbc:Name>Digitale snelweg</cbc:Name>
+       <cac:BuyersItemIdentification> 
+             <cbc:ID>[Identifier]</cbc:ID>
+       </cac:BuyersItemIdentification>
+       <cac:SellersItemIdentification> 
+              <cbc:ID>BK0232</cbc:ID>
+       </cac:SellersItemIdentification>
+       <cac:StandardItemIdentification>
+             <cbc:ID SchemeID="xxx">[Identifier]</cbc:ID>
+       </cac: StandardItemIdentification>
+       <cac:CommodityClassification>
+             <cbc:ItemClassificationCode SchemeID="xxx">[Identifier]</cbc: ItemClassificationCode>
+       </cac:CommodityClassification>
+
+       <cac:ClassifiedTaxCategory>
+             <cbc:ID>S</cbc:ID>
+             <cbc:Percent>6.00</cbc:Percent>
+                   <cac:TaxScheme>
+                         <cbc:ID>VAT</cbc:ID>
+                   </cac:TaxScheme>
+       </cac:ClassifiedTaxCategory>
+
+       <cac:AdditionalItemProperty>
+              <cbc:Name>[Name]</cbc:Name>
+              <cbc:Value>[Value]</cbc:Value>
+       </cac:AdditionalItemProperty> 
+   </cac:Item>
+
+   B.8 Prijs
+   <cac:Price>
+        <cbc:PriceAmount currencyID="EUR">50.00</cbc:PriceAmount>  
+        <cbc:BaseQuantity>1.00</cbc:BaseQuantity>
+        <cac:AllowanceCharge>
+           <cbc:ChargeIndicator>false</cbc:ChargeIndicator>
+           <cbc:Amount currencyID="EUR">[bedrag]</cbc:Amount> 
+           <cbc:BaseAmount currencyID="EUR">100</cbc:BaseAmount>
+         </cac:AllowanceCharge>
+    </cac:Price>
+</cac:InvoiceLine>  

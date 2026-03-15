@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USER & AUTH
+// ============================================
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Credit systeem
+  creditBalance Int @default(1000)
+  totalUsed     Int @default(0)
+
+  // AI Provider configuratie
+  aiProvider            String  @default("document_ai")
+  documentAiProjectId   String?
+  documentAiLocation    String? @default("eu")
+  documentAiProcessorId String?
+  documentAiApiKey      String?
+  openrouterApiKey      String?
+  openrouterModel       String? @default("google/gemini-2.0-flash-001")
+
+  // Administratie standaard-info
+  defaultAdminName    String?
+  defaultAdminAddress String?
+  defaultAdminKvk     String?
+  defaultAdminIban    String?
+
+  users       User[]
+  apiKeys     ApiKey[]
+  conversions Conversion[]
+}
+
+model User {
+  id             String       @id @default(cuid())
+  email          String       @unique
+  name           String?
+  passwordHash   String?
+  role           String       @default("USER") // ADMIN | USER | VIEWER
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  conversions Conversion[]
+}
+
+model ApiKey {
+  id             String       @id @default(cuid())
+  key            String       @unique
+  name           String
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  lastUsedAt     DateTime?
+  createdAt      DateTime     @default(now())
+  isActive       Boolean      @default(true)
+}
+
+// ============================================
+// CONVERSIONS & RESULTS
+// ============================================
+
+model Conversion {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  userId         String?
+  user           User?        @relation(fields: [userId], references: [id])
+
+  status       String @default("PENDING") // PENDING | PROCESSING | COMPLETED | FAILED | FLAGGED
+  documentType String @default("INVOICE") // INVOICE | CREDIT_NOTE | NOT_INVOICE | MULTI_INVOICE
+
+  // Input metadata (GEEN bestanden opslaan)
+  originalFilename String
+  pageCount        Int?
+  fileSize         Int?
+
+  // Administratie context
+  adminName    String?
+  adminAddress String?
+  adminKvk     String?
+  adminIban    String?
+
+  // AI resultaat
+  overallConfidence Float?
+  flaggedForReview  Boolean @default(false)
+  flagReason        String?
+
+  // Detectie info
+  detectedInvoiceCount Int @default(1)
+
+  // Processing metadata
+  aiProvider       String?
+  processingTimeMs Int?
+  creditsUsed      Int     @default(1)
+
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  results ConversionResult[]
+}
+
+model ConversionResult {
+  id           String     @id @default(cuid())
+  conversionId String
+  conversion   Conversion @relation(fields: [conversionId], references: [id])
+
+  invoiceIndex Int @default(0)
+
+  extractedData String // JSON stored as text
+  fieldScores   String // JSON stored as text
+
+  ublXml String?
+
+  isValid          Boolean @default(false)
+  validationErrors String? // JSON stored as text
+
+  flaggedFields String? // JSON stored as text
+
+  createdAt DateTime @default(now())
+}

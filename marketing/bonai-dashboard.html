@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bonai Business Case Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0a1628;
+            --bg-secondary: #111d33;
+            --bg-card: #162240;
+            --bg-card-hover: #1c2d52;
+            --brand-green: #2dd4a8;
+            --brand-green-dim: rgba(45, 212, 168, 0.15);
+            --brand-amber: #f59e0b;
+            --brand-amber-dim: rgba(245, 158, 11, 0.15);
+            --brand-blue: #3b82f6;
+            --brand-blue-dim: rgba(59, 130, 246, 0.15);
+            --brand-purple: #a78bfa;
+            --brand-purple-dim: rgba(167, 139, 250, 0.15);
+            --brand-coral: #fb7185;
+            --brand-coral-dim: rgba(251, 113, 133, 0.15);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: rgba(255, 255, 255, 0.06);
+            --radius: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: var(--brand-green-dim);
+            color: var(--brand-green);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: 100px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .header h1 {
+            font-size: clamp(28px, 4vw, 42px);
+            font-weight: 800;
+            letter-spacing: -1px;
+            line-height: 1.1;
+            margin-bottom: 8px;
+        }
+
+        .header h1 span {
+            color: var(--brand-green);
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Hero Stats */
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+            margin-bottom: 32px;
+        }
+
+        .hero-stat {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .hero-stat:hover {
+            background: var(--bg-card-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-stat .icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin: 0 auto 10px;
+        }
+
+        .hero-stat .value {
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .hero-stat .label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .hero-stat .sub {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* Section Title */
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* Grids */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 18px;
+            margin-bottom: 32px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            background: var(--bg-card-hover);
+        }
+
+        .card-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Funnel */
+        .funnel {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .funnel-step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            background: var(--bg-secondary);
+            transition: all 0.3s;
+        }
+
+        .funnel-step:hover {
+            background: rgba(45, 212, 168, 0.08);
+            transform: translateX(3px);
+        }
+
+        .funnel-step .step-label {
+            font-size: 13px;
+            font-weight: 500;
+            min-width: 100px;
+        }
+
+        .funnel-step .bar-wrap {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+            height: 5px;
+        }
+
+        .funnel-step .bar {
+            height: 5px;
+            border-radius: 3px;
+        }
+
+        .funnel-step .step-value {
+            font-size: 18px;
+            font-weight: 700;
+            min-width: 50px;
+            text-align: right;
+        }
+
+        .funnel-step .step-pct {
+            font-size: 12px;
+            color: var(--brand-green);
+            font-weight: 600;
+            min-width: 50px;
+            text-align: right;
+        }
+
+        /* Market Cards */
+        .market-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            transition: all 0.3s;
+        }
+
+        .market-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .market-card .market-badge {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 100px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            display: inline-block;
+        }
+
+        .market-card .market-name {
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .market-card .market-info {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            margin-bottom: 16px;
+        }
+
+        .market-card .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .market-card .stat-row .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .market-card .stat-row .stat-val {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .market-card .market-big-val {
+            font-size: 28px;
+            font-weight: 900;
+            margin-top: 12px;
+            letter-spacing: -1px;
+        }
+
+        .market-card .market-big-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Valuation Scenarios Grid */
+        .valuation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .val-scenario {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px 24px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .val-scenario:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .val-scenario.highlight {
+            background: linear-gradient(135deg, #162240 0%, #1a3c34 100%);
+            border: 1px solid rgba(45, 212, 168, 0.3);
+        }
+
+        .val-scenario .vs-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 24px;
+        }
+
+        .val-scenario.highlight .vs-title {
+            color: var(--brand-green);
+        }
+
+        .val-scenario .vs-val {
+            font-size: 36px;
+            font-weight: 900;
+            letter-spacing: -1.5px;
+            margin-bottom: 8px;
+        }
+
+        .val-scenario .vs-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .val-scenario .vs-math {
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+
+        .val-scenario .vs-math span:first-child {
+            color: var(--text-secondary);
+        }
+
+        .val-scenario .vs-math span:last-child {
+            font-weight: 700;
+        }
+
+        .val-scenario .vs-math.no-border {
+            margin-top: 8px;
+            padding-top: 0;
+            border: none;
+        }
+
+        /* Per Client Strip */
+        .per-client-strip {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 32px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .per-client-strip .pcs-item {
+            text-align: center;
+        }
+
+        .per-client-strip .pcs-val {
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .per-client-strip .pcs-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .per-client-strip .pcs-arrow {
+            font-size: 20px;
+            color: var(--text-muted);
+        }
+
+        /* Charts */
+        .chart-container {
+            position: relative;
+            height: 260px;
+        }
+
+        /* ASSUMPTIONS PANEL */
+        .assumptions-panel {
+            background: linear-gradient(135deg, #1c2a1a 0%, #162240 100%);
+            border: 2px solid rgba(245, 158, 11, 0.3);
+            border-radius: var(--radius);
+            padding: 32px;
+            margin-bottom: 32px;
+        }
+
+        .assumptions-panel .panel-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .assumptions-panel .panel-sub {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .assumption-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .assumption-item {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(245, 158, 11, 0.15);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .assumption-item label {
+            display: block;
+            font-size: 12px;
+            color: var(--brand-amber);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .assumption-item input,
+        .assumption-item select {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .assumption-item input:focus {
+            border-color: var(--brand-amber);
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        }
+
+        .assumption-item .unit {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Timeline */
+        .timeline-strip {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px 28px;
+            margin-bottom: 32px;
+        }
+
+        .timeline-bar {
+            display: flex;
+            align-items: stretch;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 48px;
+            margin-top: 12px;
+        }
+
+        .timeline-segment {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: white;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .timeline-segment small {
+            font-size: 10px;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        .timeline-labels {
+            display: flex;
+            margin-top: 6px;
+        }
+
+        .timeline-labels span {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 28px;
+            color: var(--text-muted);
+            font-size: 11px;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeUp 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        .delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .delay-2 {
+            animation-delay: 0.15s;
+        }
+
+        .delay-3 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-4 {
+            animation-delay: 0.25s;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                padding: 16px;
+            }
+
+            .grid-2,
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .assumption-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard">
+
+        <!-- Header -->
+        <div class="header animate-in">
+            <div class="badge">📊 Business Case Dashboard</div>
+            <h1>Bonai <span>Groeikansen</span></h1>
+            <p>Interactief overzicht van kansen, omzet, marge en bedrijfswaardering. Pas de aannames aan om scenario's
+                door te rekenen.</p>
+        </div>
+
+        <!-- ASSUMPTIONS PANEL -->
+        <div class="assumptions-panel animate-in delay-1">
+            <div class="panel-title">⚙️ Aannames <span
+                    style="font-size:12px;color:var(--brand-amber);font-weight:500;">(Pas aan om scenario's te
+                    berekenen)</span></div>
+            <div class="panel-sub">Alle gele velden uit de business case. Wijzig een waarde en het hele dashboard
+                berekent automatisch opnieuw.</div>
+            <div class="assumption-grid">
+                <div class="assumption-item">
+                    <label>Kantoren op Zenvoices</label>
+                    <input type="number" id="a_zenKantoren" value="225" min="50" max="1000" oninput="recalcAll()">
+                    <div class="unit">Geschat: 100 – 350</div>
+                </div>
+                <div class="assumption-item">
+                    <label>Kantoren op Basecone</label>
+                    <input type="number" id="a_baseKantoren" value="5000" min="500" max="10000" oninput="recalcAll()">
+                    <div class="unit">Bron: Patrick (Basecone) → 5.000</div>
+                </div>
+                <div class="assumption-item">
+                    <label>Kantoren op Exact Online</label>
+                    <input type="number" id="a_exactKantoren" value="5000" min="1000" max="15000" oninput="recalcAll()">
+                    <div class="unit">Scan & Herken gebruikers (50%)</div>
+                </div>
+                <div class="assumption-item">
+                    <label>Outreach duur Basecone</label>
+                    <input type="number" id="a_baseMaanden" value="7" min="3" max="24" oninput="recalcAll()">
+                    <div class="unit">Maanden LinkedIn outreach</div>
+                </div>
+                <div class="assumption-item">
+                    <label>Outreach duur Exact</label>
+                    <input type="number" id="a_exactMaanden" value="12" min="3" max="36" oninput="recalcAll()">
+                    <div class="unit">Maanden LinkedIn outreach</div>
+                </div>
+                <div class="assumption-item">
+                    <label>LinkedIn Invites / maand</label>
+                    <input type="number" id="a_invitesPerMaand" value="780" min="100" max="5000" oninput="recalcAll()">
+                    <div class="unit">Op basis van S&H Basecone data</div>
+                </div>
+                <div class="assumption-item">
+                    <label>Waarderingsmultiple (Scan & Herken)</label>
+                    <input type="number" id="a_multiSH" value="4" min="2" max="12" step="0.5" oninput="recalcAll()">
+                    <div class="unit">Op jaarmarge, voor S&H product</div>
+                </div>
+                <div class="assumption-item">
+                    <label>Overstap % naar Full Service</label>
+                    <input type="number" id="a_overstapPct" value="10" min="1" max="50" oninput="recalcAll()">
+                    <div class="unit">% van S&H klanten dat overstapt</div>
+                </div>
+                <div class="assumption-item">
+                    <label>Overstaptijd Full Service</label>
+                    <input type="number" id="a_overstapTijd" value="6" min="1" max="24" oninput="recalcAll()">
+                    <div class="unit">Maanden na start S&H</div>
+                </div>
+                <div class="assumption-item">
+                    <label>Bereidheid betaling Full Service / jaar</label>
+                    <input type="number" id="a_fsOmzet" value="20449" min="5000" max="50000" step="100"
+                        oninput="recalcAll()">
+                    <div class="unit">€ per klant per jaar</div>
+                </div>
+                <div class="assumption-item">
+                    <label>Marge Full Service / jaar</label>
+                    <input type="number" id="a_fsMarge" value="18900" min="5000" max="50000" step="100"
+                        oninput="recalcAll()">
+                    <div class="unit">€ per klant per jaar</div>
+                </div>
+                <div class="assumption-item">
+                    <label>Waarderingsmultiple (incl. Full Service)</label>
+                    <input type="number" id="a_multiFS" value="6.5" min="3" max="15" step="0.5" oninput="recalcAll()">
+                    <div class="unit">Op totale omzet met Full Service</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hero Stats (dynamisch) -->
+        <div class="hero-stats" id="heroStats"></div>
+
+        <!-- Timeline -->
+        <div class="section-title"><span class="dot" style="background:var(--brand-blue);"></span> Tijdlijn Outreach
+        </div>
+        <div class="timeline-strip animate-in delay-1" id="timelineSection"></div>
+
+        <!-- PROVEN FUNNEL -->
+        <div class="section-title"><span class="dot" style="background:var(--brand-green);"></span> Bewezen LinkedIn
+            Salesfunnel (Zenvoices)</div>
+        <div class="grid-2">
+            <div class="card animate-in delay-1">
+                <div class="card-title">Funnel Conversies (Gerealiseerd)</div>
+                <div class="funnel">
+                    <div class="funnel-step">
+                        <span class="step-label">Uitgenodigd</span>
+                        <div class="bar-wrap">
+                            <div class="bar" style="width:100%;background:var(--brand-blue);"></div>
+                        </div>
+                        <span class="step-value">288</span><span class="step-pct">100%</span>
+                    </div>
+                    <div class="funnel-step">
+                        <span class="step-label">Geaccepteerd</span>
+                        <div class="bar-wrap">
+                            <div class="bar" style="width:35.76%;background:var(--brand-green);"></div>
+                        </div>
+                        <span class="step-value">103</span><span class="step-pct">35,8%</span>
+                    </div>
+                    <div class="funnel-step">
+                        <span class="step-label">Replies</span>
+                        <div class="bar-wrap">
+                            <div class="bar" style="width:24.3%;background:var(--brand-amber);"></div>
+                        </div>
+                        <span class="step-value">70</span><span class="step-pct">68,0%</span>
+                    </div>
+                    <div class="funnel-step">
+                        <span class="step-label">Demo's</span>
+                        <div class="bar-wrap">
+                            <div class="bar" style="width:6.6%;background:var(--brand-purple);"></div>
+                        </div>
+                        <span class="step-value">19</span><span class="step-pct">27,1%</span>
+                    </div>
+                    <div class="funnel-step">
+                        <span class="step-label">Klanten</span>
+                        <div class="bar-wrap">
+                            <div class="bar" style="width:1.39%;background:var(--brand-coral);"></div>
+                        </div>
+                        <span class="step-value" style="color:var(--brand-green);">4</span><span
+                            class="step-pct">21,1%</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card animate-in delay-2">
+                <div class="card-title">Marge per Klant/Maand (Gerealiseerd)</div>
+                <div class="chart-container"><canvas id="revenueChart"></canvas></div>
+            </div>
+        </div>
+
+        <!-- MARKET OPPORTUNITIES (dynamic) -->
+        <div class="section-title"><span class="dot" style="background:var(--brand-amber);"></span> Marktkansen per
+            Platform</div>
+        <div class="grid-3" id="marketCards"></div>
+
+        <!-- Charts -->
+        <div class="grid-2">
+            <div class="card animate-in delay-1">
+                <div class="card-title">Omzet Verdeling per Markt</div>
+                <div class="chart-container"><canvas id="marketPieChart"></canvas></div>
+            </div>
+            <div class="card animate-in delay-2">
+                <div class="card-title">Klanten per Markt</div>
+                <div class="chart-container"><canvas id="clientsBarChart"></canvas></div>
+            </div>
+        </div>
+
+        <!-- VALUATION (dynamic) -->
+        <div class="section-title"><span class="dot" style="background:var(--brand-purple);"></span> Bedrijfswaardering
+            Scenario's</div>
+        <div id="valuationCard"></div>
+
+        <!-- Per Client (dynamic) -->
+        <div class="section-title"><span class="dot" style="background:var(--brand-coral);"></span> Waarde per Extra
+            Klant (Bonai Full Service)</div>
+        <div class="per-client-strip animate-in delay-1" id="perClientStrip"></div>
+
+        <!-- Full Service -->
+        <div class="section-title"><span class="dot" style="background:var(--brand-green);"></span> Bonai Full Service
+            (Upsell)</div>
+        <div class="card animate-in delay-1" style="margin-bottom:32px;" id="fullServiceCard"></div>
+
+        <div class="footer">Bonai Business Case Dashboard · Gebaseerd op gerealiseerde LinkedIn data (288 invites → 4
+            klanten) · Powered by Procai · Maart 2026</div>
+    </div>
+
+    <script>
+        // ===== CONSTANTS (proven, not assumptions) =====
+        const PROVEN = {
+            zenInvites: 288, zenAccepted: 103, zenReplies: 70,
+            zenDemos: 19, zenClients: 4,
+            acceptRate: 0.3576, replyRate: 0.6796,
+            demoRate: 0.2714, closeRate: 0.2105,
+            inviteToClient: 0.0139,
+            margePerClientMonth: 454.10,
+            omzetPerClientMonth: 583.23,
+            omzetPerClientYear: 6998.80,
+            margePerClientYear: 5449.16,
+        };
+
+        function fmt(n) { return new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n); }
+        function fmtM(n) { return n >= 1000000 ? '€' + (n / 1000000).toFixed(2).replace('.', ',') + 'M' : fmt(n); }
+
+        let pieChart, barChart;
+
+        // ===== RECALCULATE EVERYTHING =====
+        function recalcAll() {
+            const A = {
+                zenK: +document.getElementById('a_zenKantoren').value,
+                baseK: +document.getElementById('a_baseKantoren').value,
+                exactK: +document.getElementById('a_exactKantoren').value,
+                baseM: +document.getElementById('a_baseMaanden').value,
+                exactM: +document.getElementById('a_exactMaanden').value,
+                multiSH: +document.getElementById('a_multiSH').value,
+                overstapPct: +document.getElementById('a_overstapPct').value / 100,
+                overstapTijd: +document.getElementById('a_overstapTijd').value,
+                fsOmzet: +document.getElementById('a_fsOmzet').value,
+                fsMarge: +document.getElementById('a_fsMarge').value,
+                multiFS: +document.getElementById('a_multiFS').value,
+                invitesPerMaand: +document.getElementById('a_invitesPerMaand').value,
+            };
+
+            // Calculate invite volumes needed (Based on duration * capacity)
+            const baseInvitesNeeded = Math.round(A.baseM * A.invitesPerMaand);
+            const exactInvitesNeeded = Math.round(A.exactM * A.invitesPerMaand);
+
+            // Klanten = invites * proven conversion rate 
+            const baseClients = Math.round(baseInvitesNeeded * PROVEN.inviteToClient);
+            const exactClients = Math.round(exactInvitesNeeded * PROVEN.inviteToClient);
+            const totalSHClients = PROVEN.zenClients + baseClients + exactClients;
+
+            // Financials S&H
+            const zenOmzet = PROVEN.zenClients * PROVEN.omzetPerClientYear;
+            const zenMarge = PROVEN.zenClients * PROVEN.margePerClientYear;
+            const baseOmzet = baseClients * PROVEN.omzetPerClientYear;
+            const baseMarge = baseClients * PROVEN.margePerClientYear;
+            const exactOmzet = exactClients * PROVEN.omzetPerClientYear;
+            const exactMarge = exactClients * PROVEN.margePerClientYear;
+
+            // Waardering S&H
+            const baseWaardering = baseMarge * A.multiSH;
+            const exactWaardering = exactMarge * A.multiSH;
+            const shWaardering = (baseMarge + exactMarge) * A.multiSH;
+
+            // Full Service upsell
+            const fsClients = Math.round(totalSHClients * A.overstapPct);
+            const fsOmzetTotal = fsClients * A.fsOmzet;
+            const fsMargeTotal = fsClients * A.fsMarge;
+
+            // Totals
+            const totalOmzet = zenOmzet + baseOmzet + exactOmzet + fsOmzetTotal;
+            const totalMarge = zenMarge + baseMarge + exactMarge + fsMargeTotal;
+            const totalWaardering = totalOmzet * A.multiFS;
+
+            // Per extra FS client
+            const perClientOmzet = A.fsOmzet;
+            const perClientMarge = A.fsMarge;
+            const perClientWaardering = A.fsOmzet * A.multiFS;
+
+            // ===== RENDER HERO STATS =====
+            document.getElementById('heroStats').innerHTML = `
+        <div class="hero-stat"><div class="icon" style="background:var(--brand-green-dim);">🎯</div>
+            <div class="value" style="color:var(--brand-green);">${PROVEN.zenClients}</div>
+            <div class="label">Huidige Klanten</div><div class="sub">Via Zenvoices (Bewezen)</div></div>
+        <div class="hero-stat"><div class="icon" style="background:var(--brand-amber-dim);">💰</div>
+            <div class="value" style="color:var(--brand-amber);">€${PROVEN.margePerClientMonth.toFixed(0)}</div>
+            <div class="label">Marge / Klant / Maand</div><div class="sub">Gem. over dec/jan/feb</div></div>
+        <div class="hero-stat"><div class="icon" style="background:var(--brand-blue-dim);">📈</div>
+            <div class="value" style="color:var(--brand-blue);">${totalSHClients}</div>
+            <div class="label">Verwachte Klanten</div><div class="sub">Na ${A.baseM + A.exactM} maanden outreach</div></div>
+        <div class="hero-stat"><div class="icon" style="background:var(--brand-purple-dim);">🏆</div>
+            <div class="value" style="color:var(--brand-purple);">${fmtM(totalWaardering)}</div>
+            <div class="label">Bedrijfswaardering</div><div class="sub">Incl. Full Service (${A.multiFS}x)</div></div>
+    `;
+
+            // ===== TIMELINE =====
+            const totalM = A.baseM + A.exactM;
+            const basePct = (A.baseM / totalM * 100).toFixed(0);
+            const exactPct = (A.exactM / totalM * 100).toFixed(0);
+            document.getElementById('timelineSection').innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:14px;font-weight:600;">Totale outreach: <span style="color:var(--brand-green);">${totalM} maanden</span> (${(totalM / 12).toFixed(1)} jaar)</span>
+        </div>
+        <div class="timeline-bar">
+            <div class="timeline-segment" style="width:${basePct}%;background:var(--brand-amber);">
+                Basecone<small>${A.baseM} mnd</small>
+            </div>
+            <div class="timeline-segment" style="width:${exactPct}%;background:var(--brand-blue);">
+                Exact Online<small>${A.exactM} mnd</small>
+            </div>
+        </div>
+    `;
+
+            // ===== MARKET CARDS =====
+            document.getElementById('marketCards').innerHTML = `
+        <div class="market-card">
+            <div class="market-badge" style="background:var(--brand-green-dim);color:var(--brand-green);">✅ Bewezen</div>
+            <div class="market-name">Zenvoices</div>
+            <div class="market-info">${A.zenK} kantoren in NL</div>
+            <div class="stat-row"><span class="stat-label">Klanten (nu)</span><span class="stat-val" style="color:var(--brand-green);">${PROVEN.zenClients}</span></div>
+            <div class="stat-row"><span class="stat-label">Totale omzet</span><span class="stat-val">${fmt(zenOmzet)}</span></div>
+            <div class="stat-row"><span class="stat-label">Totale marge</span><span class="stat-val" style="color:var(--brand-green);">${fmt(zenMarge)}</span></div>
+            <div class="market-big-label" style="margin-top:12px;">Jaarlijkse marge/klant</div>
+            <div class="market-big-val" style="color:var(--brand-green);">${fmt(PROVEN.margePerClientYear)}</div>
+        </div>
+        <div class="market-card">
+            <div class="market-badge" style="background:var(--brand-amber-dim);color:var(--brand-amber);">🔜 ${A.baseM} Maanden</div>
+            <div class="market-name">Basecone</div>
+            <div class="market-info">${A.baseK.toLocaleString('nl-NL')} kantoren (${Math.round(A.baseK / A.zenK)}x groter)</div>
+            <div class="stat-row"><span class="stat-label">Verwachte klanten</span><span class="stat-val" style="color:var(--brand-amber);">${baseClients}</span></div>
+            <div class="stat-row"><span class="stat-label">LinkedIn invites nodig</span><span class="stat-val">${baseInvitesNeeded.toLocaleString('nl-NL')}</span></div>
+            <div class="stat-row"><span class="stat-label">Totale omzet</span><span class="stat-val">${fmt(baseOmzet)}</span></div>
+            <div class="stat-row"><span class="stat-label">Totale marge</span><span class="stat-val" style="color:var(--brand-amber);">${fmt(baseMarge)}</span></div>
+            <div class="market-big-label" style="margin-top:12px;">Bedrijfswaardering (${A.multiSH}x)</div>
+            <div class="market-big-val" style="color:var(--brand-amber);">${fmtM(baseWaardering)}</div>
+        </div>
+        <div class="market-card">
+            <div class="market-badge" style="background:var(--brand-blue-dim);color:var(--brand-blue);">🚀 ${A.exactM} Maanden</div>
+            <div class="market-name">Exact Online</div>
+            <div class="market-info">${A.exactK.toLocaleString('nl-NL')} kantoren (${Math.round(A.exactK / A.zenK)}x groter)</div>
+            <div class="stat-row"><span class="stat-label">Verwachte klanten</span><span class="stat-val" style="color:var(--brand-blue);">${exactClients}</span></div>
+            <div class="stat-row"><span class="stat-label">LinkedIn invites nodig</span><span class="stat-val">${exactInvitesNeeded.toLocaleString('nl-NL')}</span></div>
+            <div class="stat-row"><span class="stat-label">Totale omzet</span><span class="stat-val">${fmt(exactOmzet)}</span></div>
+            <div class="stat-row"><span class="stat-label">Totale marge</span><span class="stat-val" style="color:var(--brand-blue);">${fmt(exactMarge)}</span></div>
+            <div class="market-big-label" style="margin-top:12px;">Bedrijfswaardering (${A.multiSH}x)</div>
+            <div class="market-big-val" style="color:var(--brand-blue);">${fmtM(exactWaardering)}</div>
+        </div>
+    `;
+
+            // ===== UPDATE CHARTS =====
+            if (pieChart) {
+                pieChart.data.datasets[0].data = [zenOmzet, baseOmzet, exactOmzet, fsOmzetTotal];
+                pieChart.update();
+            }
+            if (barChart) {
+                barChart.data.datasets[0].data = [PROVEN.zenClients, baseClients, exactClients, fsClients];
+                barChart.update();
+            }
+
+            // ===== VALUATION =====
+            document.getElementById('valuationCard').innerHTML = `
+        <div class="valuation-grid">
+            <div class="val-scenario animate-in delay-1">
+                <div class="vs-title" style="color:var(--brand-amber);">Enkel Basecone</div>
+                <div class="vs-val">${fmtM(baseWaardering)}</div>
+                <div class="vs-sub">Na ${A.baseM} mnd outreach</div>
+                <div class="vs-math"><span>Marge (Jaar)</span><span>${fmt(baseMarge)}</span></div>
+                <div class="vs-math no-border"><span>Multiple (S&H)</span><span>${A.multiSH}x</span></div>
+            </div>
+            
+            <div class="val-scenario animate-in delay-2">
+                <div class="vs-title" style="color:var(--brand-blue);">Enkel Exact</div>
+                <div class="vs-val">${fmtM(exactWaardering)}</div>
+                <div class="vs-sub">Na ${A.exactM} mnd outreach</div>
+                <div class="vs-math"><span>Marge (Jaar)</span><span>${fmt(exactMarge)}</span></div>
+                <div class="vs-math no-border"><span>Multiple (S&H)</span><span>${A.multiSH}x</span></div>
+            </div>
+
+            <div class="val-scenario animate-in delay-3">
+                <div class="vs-title" style="color:white;">Basecone + Exact</div>
+                <div class="vs-val">${fmtM(shWaardering)}</div>
+                <div class="vs-sub">Na ${A.baseM + A.exactM} maanden in totaal</div>
+                <div class="vs-math"><span>Marge (Jaar)</span><span>${fmt(baseMarge + exactMarge)}</span></div>
+                <div class="vs-math no-border"><span>Multiple (S&H)</span><span>${A.multiSH}x</span></div>
+            </div>
+
+            <div class="val-scenario highlight animate-in delay-4">
+                <div class="vs-title">Full Product (Alle)</div>
+                <div class="vs-val" style="color:var(--brand-green);">${fmtM(totalWaardering)}</div>
+                <div class="vs-sub">Incl. S&H + Full Service Upsell</div>
+                <div class="vs-math"><span>Omzet (Jaar)</span><span>${fmt(totalOmzet)}</span></div>
+                <div class="vs-math no-border"><span>Multiple (FS)</span><span>${A.multiFS}x</span></div>
+            </div>
+        </div>
+    `;
+
+            // ===== PER CLIENT =====
+            document.getElementById('perClientStrip').innerHTML = `
+        <div class="pcs-item"><div class="pcs-val" style="color:var(--brand-green);">+${fmt(perClientOmzet)}</div><div class="pcs-label">Extra omzet/jaar</div></div>
+        <span class="pcs-arrow">→</span>
+        <div class="pcs-item"><div class="pcs-val" style="color:var(--brand-amber);">+${fmt(perClientMarge)}</div><div class="pcs-label">Extra marge/jaar</div></div>
+        <span class="pcs-arrow">→</span>
+        <div class="pcs-item"><div class="pcs-val" style="color:var(--brand-purple);">+${fmt(perClientWaardering)}</div><div class="pcs-label">Extra bedrijfswaardering</div></div>
+    `;
+
+            // ===== FULL SERVICE =====
+            document.getElementById('fullServiceCard').innerHTML = `
+        <div class="card-title">${(A.overstapPct * 100).toFixed(0)}% Klanten stapt over naar Full Service</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:20px;margin-top:12px;">
+            <div style="text-align:center;"><div style="font-size:13px;color:var(--text-secondary);">Betaling/jaar</div><div style="font-size:22px;font-weight:800;color:var(--brand-amber);">${fmt(A.fsOmzet)}</div></div>
+            <div style="text-align:center;"><div style="font-size:13px;color:var(--text-secondary);">Overstaptijd</div><div style="font-size:22px;font-weight:800;">${A.overstapTijd} mnd</div></div>
+            <div style="text-align:center;"><div style="font-size:13px;color:var(--text-secondary);">Overstappers</div><div style="font-size:22px;font-weight:800;color:var(--brand-green);">${fsClients} klanten</div></div>
+            <div style="text-align:center;"><div style="font-size:13px;color:var(--text-secondary);">Extra omzet/jaar</div><div style="font-size:22px;font-weight:800;color:var(--brand-blue);">${fmt(fsOmzetTotal)}</div></div>
+        </div>
+    `;
+        }
+
+        // ===== INIT CHARTS =====
+        function initCharts() {
+            const revCtx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(revCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Dec-Jacc', 'Jan-Jacc', 'Feb-Jacc', 'Dec-CS', 'Jan-CS', 'Feb-CS'],
+                    datasets: [
+                        { label: 'Marge (€)', data: [249, 322, 435, 326, 825, 274], backgroundColor: 'rgba(45,212,168,0.7)', borderRadius: 6 },
+                        { label: 'Kosten (€)', data: [83, 100, 135, 101, 267, 88], backgroundColor: 'rgba(251,113,133,0.5)', borderRadius: 6 }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'Inter' } } } },
+                    scales: {
+                        x: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { display: false } },
+                        y: { ticks: { color: '#64748b', callback: v => '€' + v }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                    }
+                }
+            });
+
+            const pieCtx = document.getElementById('marketPieChart').getContext('2d');
+            pieChart = new Chart(pieCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Zenvoices', 'Basecone', 'Exact Online', 'Full Service'],
+                    datasets: [{ data: [0, 0, 0, 0], backgroundColor: ['#2dd4a8', '#f59e0b', '#3b82f6', '#a78bfa'], borderWidth: 0, hoverOffset: 8 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, cutout: '65%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#94a3b8', font: { family: 'Inter', size: 11 }, padding: 12, usePointStyle: true } },
+                        tooltip: { callbacks: { label: ctx => ctx.label + ': ' + fmt(ctx.raw) } }
+                    }
+                }
+            });
+
+            const bCtx = document.getElementById('clientsBarChart').getContext('2d');
+            barChart = new Chart(bCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Zenvoices', 'Basecone', 'Exact Online', 'Full Service'],
+                    datasets: [{ label: 'Klanten', data: [0, 0, 0, 0], backgroundColor: ['#2dd4a8', '#f59e0b', '#3b82f6', '#a78bfa'], borderRadius: 8, barThickness: 36 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.raw + ' klanten' } } },
+                    scales: {
+                        x: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                        y: { ticks: { color: '#94a3b8', font: { size: 12, weight: 600 } }, grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // Boot
+        initCharts();
+        recalcAll();
+    </script>
+</body>
+
+</html>
