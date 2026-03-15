@@ -1,0 +1,54 @@
+[
+  {
+    "test": "Credits",
+    "status": 200,
+    "pass": true,
+    "data": {
+      "balance": 974,
+      "totalUsed": 26,
+      "limit": 1000
+    }
+  },
+  {
+    "test": "Conversions",
+    "status": 200,
+    "pass": true,
+    "count": "N/A"
+  },
+  {
+    "test": "Convert-JSON",
+    "status": 200,
+    "pass": true,
+    "convId": "cmms3zadj3knpixze",
+    "hasXml": true,
+    "credits": 1
+  },
+  {
+    "test": "Detail",
+    "status": 200,
+    "pass": true,
+    "results": 1
+  },
+  {
+    "test": "Download-XML",
+    "status": 200,
+    "pass": true,
+    "contentType": "application/xml; charset=utf-8",
+    "xmlLen": 5598
+  },
+  {
+    "test": "Direct-XML",
+    "status": 200,
+    "pass": true,
+    "contentType": "application/xml; charset=utf-8",
+    "xConvId": "cmms3zgagzpwa683p",
+    "hasPINT": true,
+    "xmlLen": 5598
+  },
+  {
+    "test": "Auth-Fail",
+    "status": 401,
+    "pass": true,
+    "error": "unauthorized"
+  }
+]

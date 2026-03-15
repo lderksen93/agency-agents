@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
+import { validateApiKey } from '@/lib/auth/api-key-auth';
 import Database from 'better-sqlite3';
 import path from 'path';
 
@@ -12,9 +13,12 @@ export async function GET(
     { params }: { params: { id: string } }
 ) {
     try {
-        const session = await getServerSession(authOptions);
-        if (!session?.user) {
-            return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+        const apiKeyAuth = await validateApiKey(request);
+        if (!apiKeyAuth) {
+            const session = await getServerSession(authOptions);
+            if (!session?.user) {
+                return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+            }
         }
 
         const db = new Database(path.resolve(process.cwd(), 'prisma/dev.db'), { readonly: true });

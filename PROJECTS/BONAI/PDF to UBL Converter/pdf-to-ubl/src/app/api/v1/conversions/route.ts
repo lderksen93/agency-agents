@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
+import { validateApiKey } from '@/lib/auth/api-key-auth';
 import { prisma } from '@/lib/db/prisma';
 
 /**
@@ -8,15 +9,21 @@ import { prisma } from '@/lib/db/prisma';
  */
 export async function GET(request: NextRequest) {
     try {
-        const session = await getServerSession(authOptions);
-        if (!session?.user) {
-            return NextResponse.json(
-                { error: 'unauthorized', message: 'Authenticatie vereist' },
-                { status: 401 }
-            );
-        }
+        let organizationId: string;
 
-        const organizationId = (session.user as any).organizationId;
+        const apiKeyAuth = await validateApiKey(request);
+        if (apiKeyAuth) {
+            organizationId = apiKeyAuth.organizationId;
+        } else {
+            const session = await getServerSession(authOptions);
+            if (!session?.user) {
+                return NextResponse.json(
+                    { error: 'unauthorized', message: 'Authenticatie vereist' },
+                    { status: 401 }
+                );
+            }
+            organizationId = (session.user as any).organizationId;
+        }
 
         const conversions = prisma.conversion.findMany(
             { organizationId },
