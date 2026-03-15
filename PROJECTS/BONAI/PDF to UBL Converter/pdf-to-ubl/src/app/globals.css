@@ -2,22 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --background: #0a0a0f;
-  --foreground: #e8e8ed;
-  --card: #12121a;
-  --card-hover: #1a1a25;
-  --border: #2a2a3a;
-  --primary: #6366f1;
-  --primary-hover: #818cf8;
-  --primary-glow: rgba(99, 102, 241, 0.15);
-  --success: #22c55e;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-  --muted: #71717a;
-  --accent: #06b6d4;
+  --background: #f8f9fb;
+  --foreground: #1a1a2e;
+  --card: #ffffff;
+  --card-hover: #f4f5f7;
+  --border: #e2e4e9;
+  --border-light: #eef0f3;
+  --primary: #0066cc;
+  --primary-hover: #0052a3;
+  --primary-light: rgba(0, 102, 204, 0.08);
+  --success: #16a34a;
+  --success-light: rgba(22, 163, 74, 0.08);
+  --warning: #d97706;
+  --warning-light: rgba(217, 119, 6, 0.08);
+  --danger: #dc2626;
+  --danger-light: rgba(220, 38, 38, 0.08);
+  --muted: #6b7280;
+  --accent: #0891b2;
 }
 
 * {
@@ -34,153 +38,131 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Glassmorphism utility */
-.glass {
-  background: rgba(18, 18, 26, 0.8);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--border);
-}
-
-/* Card styles */
 .card {
   background: var(--card);
-  border-radius: 16px;
+  border-radius: 10px;
   border: 1px solid var(--border);
   padding: 24px;
-  transition: all 0.2s ease;
+  transition: box-shadow 0.2s ease;
 }
 
 .card:hover {
-  border-color: rgba(99, 102, 241, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-/* Button styles */
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary), #8b5cf6);
-  color: white;
+  background: var(--primary);
+  color: #ffffff;
   border: none;
-  border-radius: 12px;
-  padding: 12px 24px;
-  font-weight: 600;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 500;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+  transition: background 0.15s ease;
 }
 
 .btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+  background: var(--primary-hover);
 }
 
 .btn-primary:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  transform: none;
 }
 
 .btn-secondary {
   background: var(--card);
   color: var(--foreground);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 12px 24px;
+  border-radius: 8px;
+  padding: 10px 20px;
   font-weight: 500;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 .btn-secondary:hover {
-  border-color: var(--primary);
   background: var(--card-hover);
+  border-color: #ccd0d7;
 }
 
 .btn-danger {
-  background: rgba(239, 68, 68, 0.1);
+  background: var(--danger-light);
   color: var(--danger);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  border-radius: 12px;
-  padding: 12px 24px;
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  border-radius: 8px;
+  padding: 10px 20px;
   font-weight: 500;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.15s ease;
 }
 
 .btn-danger:hover {
-  background: rgba(239, 68, 68, 0.2);
+  background: rgba(220, 38, 38, 0.12);
 }
 
-/* Input styles */
 .input {
-  background: var(--card);
+  background: #ffffff;
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 12px 16px;
+  border-radius: 8px;
+  padding: 10px 14px;
   color: var(--foreground);
   font-size: 14px;
   width: 100%;
-  transition: all 0.2s ease;
+  transition: border-color 0.15s ease;
   outline: none;
   font-family: 'Inter', sans-serif;
 }
 
 .input:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-glow);
+  box-shadow: 0 0 0 3px var(--primary-light);
 }
 
 .input::placeholder {
-  color: var(--muted);
+  color: #9ca3af;
 }
 
-/* Label */
 .label {
   display: block;
   font-size: 13px;
   font-weight: 500;
   color: var(--muted);
   margin-bottom: 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
-/* Badge styles */
 .badge {
   display: inline-flex;
   align-items: center;
-  padding: 4px 10px;
-  border-radius: 8px;
+  padding: 3px 10px;
+  border-radius: 6px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .badge-success {
-  background: rgba(34, 197, 94, 0.1);
+  background: var(--success-light);
   color: var(--success);
-  border: 1px solid rgba(34, 197, 94, 0.2);
 }
 
 .badge-warning {
-  background: rgba(245, 158, 11, 0.1);
+  background: var(--warning-light);
   color: var(--warning);
-  border: 1px solid rgba(245, 158, 11, 0.2);
 }
 
 .badge-danger {
-  background: rgba(239, 68, 68, 0.1);
+  background: var(--danger-light);
   color: var(--danger);
-  border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
 .badge-info {
-  background: rgba(6, 182, 212, 0.1);
+  background: rgba(8, 145, 178, 0.08);
   color: var(--accent);
-  border: 1px solid rgba(6, 182, 212, 0.2);
 }
 
-/* Table */
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -188,42 +170,40 @@ body {
 
 .table th {
   text-align: left;
-  padding: 12px 16px;
+  padding: 10px 14px;
   font-size: 12px;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
   color: var(--muted);
   border-bottom: 1px solid var(--border);
+  background: var(--background);
 }
 
 .table td {
-  padding: 14px 16px;
-  border-bottom: 1px solid rgba(42, 42, 58, 0.5);
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-light);
   font-size: 14px;
 }
 
 .table tr:hover td {
-  background: rgba(99, 102, 241, 0.03);
+  background: rgba(0, 102, 204, 0.02);
 }
 
-/* Drop zone */
 .dropzone {
   border: 2px dashed var(--border);
-  border-radius: 16px;
+  border-radius: 10px;
   padding: 48px;
   text-align: center;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+  background: #fafbfc;
 }
 
 .dropzone:hover,
 .dropzone.active {
   border-color: var(--primary);
-  background: var(--primary-glow);
+  background: var(--primary-light);
 }
 
-/* Confidence bar */
 .confidence-bar {
   height: 6px;
   background: var(--border);
@@ -237,26 +217,25 @@ body {
   transition: width 0.5s ease;
 }
 
-/* Zero data retention banner */
-.zero-data-banner {
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.08), rgba(6, 182, 212, 0.08));
-  border: 1px solid rgba(34, 197, 94, 0.2);
-  border-radius: 12px;
+.compliance-banner {
+  background: var(--success-light);
+  border: 1px solid rgba(22, 163, 74, 0.15);
+  border-radius: 8px;
   padding: 12px 16px;
   display: flex;
   align-items: center;
   gap: 10px;
   font-size: 13px;
+  color: var(--foreground);
 }
 
-/* Sidebar */
 .sidebar {
   width: 260px;
   height: 100vh;
   position: fixed;
   left: 0;
   top: 0;
-  background: var(--card);
+  background: #ffffff;
   border-right: 1px solid var(--border);
   padding: 24px 0;
   display: flex;
@@ -267,24 +246,24 @@ body {
 .sidebar-link {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 24px;
+  gap: 10px;
+  padding: 9px 24px;
   color: var(--muted);
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 .sidebar-link:hover {
   color: var(--foreground);
-  background: rgba(99, 102, 241, 0.05);
+  background: var(--card-hover);
 }
 
 .sidebar-link.active {
   color: var(--primary);
-  background: var(--primary-glow);
-  border-right: 3px solid var(--primary);
+  background: var(--primary-light);
+  border-right: 2px solid var(--primary);
 }
 
 .main-content {
@@ -293,17 +272,6 @@ body {
   min-height: 100vh;
 }
 
-/* Pulse animation */
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
-  50% { box-shadow: 0 0 0 8px rgba(99, 102, 241, 0); }
-}
-
-.pulse-glow {
-  animation: pulse-glow 2s infinite;
-}
-
-/* Spinner */
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
@@ -317,14 +285,13 @@ body {
   animation: spin 0.8s linear infinite;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .sidebar {
     width: 100%;
     height: auto;
     position: relative;
   }
-  
+
   .main-content {
     margin-left: 0;
   }

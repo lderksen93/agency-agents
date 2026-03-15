@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Lock, Globe, Copy, Check } from 'lucide-react';
 
 export default function ApiDocsPage() {
     const [copied, setCopied] = useState('');
@@ -16,17 +17,19 @@ export default function ApiDocsPage() {
             <button
                 onClick={() => copyCode(code, id)}
                 style={{
-                    position: 'absolute', top: '8px', right: '8px', background: 'rgba(139, 92, 246, 0.2)',
-                    border: '1px solid rgba(139, 92, 246, 0.3)', borderRadius: '6px', color: 'var(--primary)',
+                    position: 'absolute', top: '8px', right: '8px', background: '#ffffff',
+                    border: '1px solid var(--border)', borderRadius: '6px', color: 'var(--foreground)',
                     padding: '4px 10px', fontSize: '11px', cursor: 'pointer',
+                    display: 'inline-flex', alignItems: 'center', gap: '4px',
                 }}
             >
-                {copied === id ? '✓ Gekopieerd' : '📋 Kopieer'}
+                {copied === id ? <><Check size={10} /> Gekopieerd</> : <><Copy size={10} /> Kopieer</>}
             </button>
             <pre style={{
-                background: 'rgba(0,0,0,0.4)', border: '1px solid var(--border)',
-                borderRadius: '10px', padding: '16px', fontSize: '12px', lineHeight: '1.6',
+                background: '#f1f3f5', border: '1px solid var(--border)',
+                borderRadius: '6px', padding: '14px', fontSize: '12px', lineHeight: '1.6',
                 overflow: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all',
+                color: 'var(--foreground)',
             }}>
                 <code>{code}</code>
             </pre>
@@ -37,8 +40,8 @@ export default function ApiDocsPage() {
         <div className="card" style={{ marginBottom: '24px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
                 <span style={{
-                    background: method === 'POST' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(59, 130, 246, 0.15)',
-                    color: method === 'POST' ? '#22c55e' : '#3b82f6',
+                    background: method === 'POST' ? 'var(--success-light)' : 'var(--primary-light)',
+                    color: method === 'POST' ? 'var(--success)' : 'var(--primary)',
                     padding: '3px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 700, fontFamily: 'monospace',
                 }}>{method}</span>
                 <code style={{ fontSize: '14px', fontWeight: 600 }}>{path}</code>
@@ -51,45 +54,46 @@ export default function ApiDocsPage() {
     return (
         <div>
             <div style={{ marginBottom: '32px' }}>
-                <h1 style={{ fontSize: '28px', fontWeight: 700, marginBottom: '8px' }}>📡 API Documentatie</h1>
+                <h1 style={{ fontSize: '24px', fontWeight: 600, marginBottom: '6px' }}>API Documentatie</h1>
                 <p style={{ color: 'var(--muted)', fontSize: '14px' }}>
                     Integreer PDF naar UBL conversie in uw applicatie via onze REST API.
                 </p>
             </div>
 
-            {/* Authentication */}
-            <div className="card" style={{ marginBottom: '24px', borderColor: 'rgba(139, 92, 246, 0.3)' }}>
-                <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '12px' }}>🔐 Authenticatie</h2>
+            <div className="card" style={{ marginBottom: '24px' }}>
+                <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '12px' }}>Authenticatie</h2>
                 <p style={{ fontSize: '13px', marginBottom: '12px' }}>
                     Gebruik uw API key in de <code>Authorization</code> header. API keys kunt u genereren via{' '}
-                    <a href="/dashboard/api-keys" style={{ color: 'var(--primary)' }}>Dashboard → API Keys</a>.
+                    <a href="/dashboard/api-keys" style={{ color: 'var(--primary)' }}>Dashboard &gt; API Keys</a>.
                 </p>
                 <CodeBlock id="auth" language="bash" code={`Authorization: Bearer prc_sk_uw_api_key_hier`} />
-                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                     {[
-                        { icon: '🇪🇺', text: 'EU servers' },
-                        { icon: '🔒', text: 'Zero Data Retention' },
-                        { icon: '📊', text: 'Credit-based pricing' },
-                        { icon: '⚡', text: 'Peppol PINT EU compliant' },
+                        { icon: Globe, text: 'EU servers' },
+                        { icon: Lock, text: 'Zero Data Retention' },
+                        { text: 'Credit-based pricing' },
+                        { text: 'Peppol PINT EU compliant' },
                     ].map((badge, i) => (
                         <span key={i} style={{
-                            background: 'rgba(139, 92, 246, 0.08)', border: '1px solid rgba(139, 92, 246, 0.15)',
+                            background: 'var(--primary-light)', border: '1px solid rgba(0, 102, 204, 0.1)',
                             borderRadius: '6px', padding: '4px 10px', fontSize: '11px',
-                        }}>{badge.icon} {badge.text}</span>
+                            display: 'inline-flex', alignItems: 'center', gap: '4px',
+                        }}>
+                            {badge.icon && <badge.icon size={10} />}
+                            {badge.text}
+                        </span>
                     ))}
                 </div>
             </div>
 
-            {/* Base URL */}
             <div className="card" style={{ marginBottom: '24px' }}>
-                <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '8px' }}>🌐 Base URL</h2>
+                <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '8px' }}>Base URL</h2>
                 <CodeBlock id="base" language="text" code={`https://uw-domein.nl/api/v1`} />
             </div>
 
-            {/* Convert PDF */}
-            <h2 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '16px', marginTop: '32px' }}>Endpoints</h2>
+            <h2 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '16px', marginTop: '32px' }}>Endpoints</h2>
 
-            <Endpoint method="POST" path="/api/v1/convert" description="Upload een PDF factuur en ontvang UBL XML terug. Eén credit per factuur.">
+            <Endpoint method="POST" path="/api/v1/convert" description="Upload een PDF factuur en ontvang UBL XML terug. Een credit per factuur.">
                 <h4 style={{ fontSize: '13px', fontWeight: 600, marginBottom: '8px', color: 'var(--primary)' }}>Request Headers</h4>
                 <table className="table" style={{ fontSize: '12px', marginBottom: '16px' }}>
                     <thead>
@@ -109,7 +113,7 @@ export default function ApiDocsPage() {
                         <tr><th>Veld</th><th>Type</th><th>Verplicht</th><th>Beschrijving</th></tr>
                     </thead>
                     <tbody>
-                        <tr><td><code>file</code></td><td>File</td><td>✅ Ja</td><td>PDF bestand (max 20MB)</td></tr>
+                        <tr><td><code>file</code></td><td>File</td><td>Ja</td><td>PDF bestand (max 20MB)</td></tr>
                         <tr><td><code>adminName</code></td><td>String</td><td>Nee</td><td>Bedrijfsnaam afnemer (buyer)</td></tr>
                         <tr><td><code>adminAddress</code></td><td>String</td><td>Nee</td><td>Adres afnemer</td></tr>
                         <tr><td><code>adminKvk</code></td><td>String</td><td>Nee</td><td>KVK-nummer afnemer</td></tr>
@@ -124,7 +128,7 @@ export default function ApiDocsPage() {
 
                 <details style={{ marginBottom: '16px' }}>
                     <summary style={{ cursor: 'pointer', fontSize: '13px', fontWeight: 500, color: 'var(--primary)' }}>
-                        📄 Voorbeeld JSON Response
+                        Voorbeeld JSON Response
                     </summary>
                     <CodeBlock id="json-resp" language="json" code={`{
   "conversionId": "cm1234abc",
@@ -144,7 +148,7 @@ export default function ApiDocsPage() {
         "totalVatAmount": { "value": "210.00", "confidence": 0.94 },
         "totalGrossAmount": { "value": "1210.00", "confidence": 0.95 }
       },
-      "ublXml": "<?xml version=\\"1.0\\" encoding=\\"UTF-8\\"?>\\n<Invoice>...</Invoice>",
+      "ublXml": "<?xml version=\\"1.0\\"?>\\n<Invoice>...</Invoice>",
       "isValid": true,
       "validationErrors": [],
       "flaggedFields": []
@@ -168,14 +172,12 @@ export default function ApiDocsPage() {
                 </p>
             </Endpoint>
 
-            {/* Get Conversion */}
-            <Endpoint method="GET" path="/api/v1/convert/{id}" description="Haal de volledige details van een eerdere conversie op.">
+            <Endpoint method="GET" path="/api/v1/convert/{'{id}'}" description="Haal de volledige details van een eerdere conversie op.">
                 <CodeBlock id="get-conv" language="bash" code={`curl https://uw-domein.nl/api/v1/convert/cm1234abc \\
   -H "Authorization: Bearer prc_sk_uw_api_key"`} />
             </Endpoint>
 
-            {/* Download XML */}
-            <Endpoint method="GET" path="/api/v1/convert/{id}/download?index=0" description="Download de gegenereerde UBL XML als bestand.">
+            <Endpoint method="GET" path="/api/v1/convert/{'{id}'}/download?index=0" description="Download de gegenereerde UBL XML als bestand.">
                 <CodeBlock id="download" language="bash" code={`curl https://uw-domein.nl/api/v1/convert/cm1234abc/download?index=0 \\
   -H "Authorization: Bearer prc_sk_uw_api_key" \\
   -o factuur_ubl.xml`} />
@@ -189,13 +191,12 @@ export default function ApiDocsPage() {
                 </table>
             </Endpoint>
 
-            {/* Credits */}
             <Endpoint method="GET" path="/api/v1/credits" description="Controleer uw credit saldo.">
                 <CodeBlock id="credits" language="bash" code={`curl https://uw-domein.nl/api/v1/credits \\
   -H "Authorization: Bearer prc_sk_uw_api_key"`} />
                 <details>
                     <summary style={{ cursor: 'pointer', fontSize: '13px', fontWeight: 500, color: 'var(--primary)' }}>
-                        📄 Voorbeeld Response
+                        Voorbeeld Response
                     </summary>
                     <CodeBlock id="credits-resp" language="json" code={`{
   "balance": 997,
@@ -205,14 +206,12 @@ export default function ApiDocsPage() {
                 </details>
             </Endpoint>
 
-            {/* Conversions List */}
             <Endpoint method="GET" path="/api/v1/conversions" description="Lijst van recente conversies voor uw organisatie.">
                 <CodeBlock id="conversions" language="bash" code={`curl https://uw-domein.nl/api/v1/conversions \\
   -H "Authorization: Bearer prc_sk_uw_api_key"`} />
             </Endpoint>
 
-            {/* Error Codes */}
-            <h2 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '16px', marginTop: '32px' }}>Foutcodes</h2>
+            <h2 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '16px', marginTop: '32px' }}>Foutcodes</h2>
             <div className="card" style={{ marginBottom: '24px' }}>
                 <table className="table" style={{ fontSize: '12px' }}>
                     <thead>
@@ -230,40 +229,26 @@ export default function ApiDocsPage() {
                 </table>
             </div>
 
-            {/* Code Examples */}
-            <h2 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '16px', marginTop: '32px' }}>Code Voorbeelden</h2>
+            <h2 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '16px', marginTop: '32px' }}>Code Voorbeelden</h2>
 
             <div className="card" style={{ marginBottom: '24px' }}>
-                <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px' }}>🐍 Python</h3>
+                <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px' }}>Python</h3>
                 <CodeBlock id="python" language="python" code={`import requests
 
 API_KEY = "prc_sk_uw_api_key"
 BASE_URL = "https://uw-domein.nl/api/v1"
 
-# Optie 1: JSON response met alle data
 response = requests.post(
     f"{BASE_URL}/convert",
     headers={"Authorization": f"Bearer {API_KEY}"},
     files={"file": open("factuur.pdf", "rb")}
 )
 data = response.json()
-ubl_xml = data["results"][0]["ublXml"]
-
-# Optie 2: Direct XML response
-response = requests.post(
-    f"{BASE_URL}/convert",
-    headers={
-        "Authorization": f"Bearer {API_KEY}",
-        "Accept": "application/xml"
-    },
-    files={"file": open("factuur.pdf", "rb")}
-)
-with open("factuur_ubl.xml", "wb") as f:
-    f.write(response.content)`} />
+ubl_xml = data["results"][0]["ublXml"]`} />
             </div>
 
             <div className="card" style={{ marginBottom: '24px' }}>
-                <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px' }}>🟢 Node.js</h3>
+                <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px' }}>Node.js</h3>
                 <CodeBlock id="nodejs" language="javascript" code={`const fs = require('fs');
 const FormData = require('form-data');
 
@@ -273,29 +258,17 @@ const BASE_URL = 'https://uw-domein.nl/api/v1';
 const form = new FormData();
 form.append('file', fs.createReadStream('factuur.pdf'));
 
-// Optie 1: JSON response
 const response = await fetch(\`\${BASE_URL}/convert\`, {
   method: 'POST',
   headers: { 'Authorization': \`Bearer \${API_KEY}\` },
   body: form,
 });
 const data = await response.json();
-console.log(data.results[0].ublXml);
-
-// Optie 2: Direct XML
-const xmlResponse = await fetch(\`\${BASE_URL}/convert\`, {
-  method: 'POST',
-  headers: {
-    'Authorization': \`Bearer \${API_KEY}\`,
-    'Accept': 'application/xml',
-  },
-  body: form,
-});
-fs.writeFileSync('output.xml', await xmlResponse.text());`} />
+console.log(data.results[0].ublXml);`} />
             </div>
 
             <div className="card" style={{ marginBottom: '24px' }}>
-                <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px' }}>💻 C# / .NET</h3>
+                <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px' }}>C# / .NET</h3>
                 <CodeBlock id="csharp" language="csharp" code={`using var client = new HttpClient();
 client.DefaultRequestHeaders.Add("Authorization", "Bearer prc_sk_uw_api_key");
 client.DefaultRequestHeaders.Add("Accept", "application/xml");
@@ -308,8 +281,7 @@ var xml = await response.Content.ReadAsStringAsync();
 File.WriteAllText("factuur_ubl.xml", xml);`} />
             </div>
 
-            {/* Rate Limits */}
-            <h2 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '16px', marginTop: '32px' }}>Limieten</h2>
+            <h2 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '16px', marginTop: '32px' }}>Limieten</h2>
             <div className="card" style={{ marginBottom: '24px' }}>
                 <table className="table" style={{ fontSize: '13px' }}>
                     <tbody>
@@ -323,10 +295,10 @@ File.WriteAllText("factuur_ubl.xml", xml);`} />
                 </table>
             </div>
 
-            {/* EU Banner */}
-            <div className="zero-data-banner">
-                🔒 <strong>Zero Data Retention</strong> — Alle documenten worden direct na verwerking verwijderd.
-                🇪🇺 Verwerking op Europese servers. Peppol PINT EU compliant output.
+            <div className="compliance-banner">
+                <Lock size={14} style={{ color: 'var(--success)', flexShrink: 0 }} />
+                <span><strong>Zero Data Retention</strong> — Alle documenten worden direct na verwerking verwijderd. Verwerking op Europese servers. Peppol PINT EU compliant output.</span>
+                <Globe size={14} style={{ color: 'var(--primary)', flexShrink: 0 }} />
             </div>
         </div>
     );

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { TrendingUp, CreditCard, FileText, Lock, Globe } from 'lucide-react';
 
 interface ConversionItem {
     id: string;
@@ -44,17 +45,17 @@ export default function DashboardPage() {
     return (
         <div>
             <div style={{ marginBottom: '32px' }}>
-                <h1 style={{ fontSize: '28px', fontWeight: 700, marginBottom: '8px' }}>Dashboard</h1>
+                <h1 style={{ fontSize: '24px', fontWeight: 600, marginBottom: '6px' }}>Dashboard</h1>
                 <p style={{ color: 'var(--muted)', fontSize: '14px' }}>Overzicht van uw conversies en creditverbruik.</p>
             </div>
 
-            {/* Stats cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '32px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '28px' }}>
                 <div className="card">
-                    <div style={{ fontSize: '12px', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>
-                        Credits Resterend
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                        <CreditCard size={16} style={{ color: 'var(--muted)' }} />
+                        <span style={{ fontSize: '12px', color: 'var(--muted)', fontWeight: 500 }}>Credits Resterend</span>
                     </div>
-                    <div style={{ fontSize: '32px', fontWeight: 700, color: credits.balance > 100 ? 'var(--success)' : 'var(--warning)' }}>
+                    <div style={{ fontSize: '28px', fontWeight: 600, color: credits.balance > 100 ? 'var(--success)' : 'var(--warning)' }}>
                         {loading ? '...' : credits.balance}
                     </div>
                     <div style={{ fontSize: '12px', color: 'var(--muted)', marginTop: '4px' }}>
@@ -63,40 +64,42 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="card">
-                    <div style={{ fontSize: '12px', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>
-                        Credits Gebruikt
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                        <TrendingUp size={16} style={{ color: 'var(--muted)' }} />
+                        <span style={{ fontSize: '12px', color: 'var(--muted)', fontWeight: 500 }}>Credits Gebruikt</span>
                     </div>
-                    <div style={{ fontSize: '32px', fontWeight: 700 }}>
+                    <div style={{ fontSize: '28px', fontWeight: 600 }}>
                         {loading ? '...' : credits.totalUsed}
                     </div>
                     <div style={{ fontSize: '12px', color: 'var(--muted)', marginTop: '4px' }}>facturen verwerkt</div>
                 </div>
 
                 <div className="card">
-                    <div style={{ fontSize: '12px', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>
-                        Snelle Actie
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                        <FileText size={16} style={{ color: 'var(--muted)' }} />
+                        <span style={{ fontSize: '12px', color: 'var(--muted)', fontWeight: 500 }}>Snelle Actie</span>
                     </div>
-                    <Link href="/dashboard/convert" className="btn-primary" style={{ display: 'inline-block', marginTop: '8px' }}>
-                        📄 Nieuwe Conversie
+                    <Link href="/dashboard/convert" className="btn-primary" style={{ display: 'inline-block', marginTop: '4px', fontSize: '13px', padding: '8px 16px' }}>
+                        Nieuwe Conversie
                     </Link>
                 </div>
             </div>
 
-            {/* Zero Data Retention info */}
-            <div className="zero-data-banner" style={{ marginBottom: '24px' }}>
-                🔒 <strong>Zero Data Retention</strong> — Uw documenten worden niet opgeslagen. Alle verwerking vindt plaats op 🇪🇺 Europese servers.
+            <div className="compliance-banner" style={{ marginBottom: '24px' }}>
+                <Lock size={14} style={{ color: 'var(--success)', flexShrink: 0 }} />
+                <span><strong>Zero Data Retention</strong> — Uw documenten worden niet opgeslagen. Alle verwerking vindt plaats op Europese servers.</span>
+                <Globe size={14} style={{ color: 'var(--primary)', flexShrink: 0 }} />
             </div>
 
-            {/* Recent conversions */}
             <div className="card">
-                <h2 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '16px' }}>Recente Conversies</h2>
+                <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px' }}>Recente Conversies</h2>
 
                 {conversions.length === 0 ? (
                     <div style={{ textAlign: 'center', padding: '48px 24px', color: 'var(--muted)' }}>
-                        <div style={{ fontSize: '48px', marginBottom: '16px' }}>📄</div>
-                        <p style={{ fontSize: '16px', marginBottom: '8px' }}>Nog geen conversies</p>
+                        <FileText size={40} style={{ color: 'var(--border)', marginBottom: '12px' }} />
+                        <p style={{ fontSize: '15px', marginBottom: '8px' }}>Nog geen conversies</p>
                         <p style={{ fontSize: '13px' }}>
-                            <Link href="/dashboard/convert" style={{ color: 'var(--primary)' }}>Start uw eerste conversie →</Link>
+                            <Link href="/dashboard/convert" style={{ color: 'var(--primary)' }}>Start uw eerste conversie</Link>
                         </p>
                     </div>
                 ) : (
@@ -118,7 +121,7 @@ export default function DashboardPage() {
                                     <td>{statusBadge(conv.status)}</td>
                                     <td>
                                         {conv.overallConfidence !== null ? (
-                                            <span style={{ color: conv.overallConfidence > 0.85 ? 'var(--success)' : 'var(--warning)' }}>
+                                            <span style={{ color: conv.overallConfidence > 0.85 ? 'var(--success)' : 'var(--warning)', fontWeight: 500 }}>
                                                 {Math.round(conv.overallConfidence * 100)}%
                                             </span>
                                         ) : '—'}
@@ -129,7 +132,7 @@ export default function DashboardPage() {
                                     </td>
                                     <td>
                                         <Link href={`/dashboard/results/${conv.id}`} style={{ color: 'var(--primary)', fontSize: '13px' }}>
-                                            Bekijken →
+                                            Bekijken
                                         </Link>
                                     </td>
                                 </tr>

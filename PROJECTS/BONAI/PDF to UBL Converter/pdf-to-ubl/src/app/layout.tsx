@@ -3,9 +3,9 @@ import Providers from "@/components/Providers";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Procai — PDF naar UBL Converter",
+  title: "Bonai — PDF naar UBL Converter",
   description: "Converteer PDF-facturen naar gevalideerde UBL XML (Peppol BIS 3.0). Zero Data Retention, verwerking op Europese servers.",
-  keywords: ["PDF naar UBL", "UBL converter", "Peppol", "factuur", "XML", "e-factureren"],
+  keywords: ["PDF naar UBL", "UBL converter", "Peppol", "factuur", "XML", "e-factureren", "Bonai"],
 };
 
 export default function RootLayout({

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from 'react';
 import { FIELD_LABELS, FIELD_GROUPS } from '@/lib/ubl-field-labels';
+import { Upload, CircleCheck as CheckCircle, TriangleAlert as AlertTriangle, Download, Copy, Eye, EyeOff, Building2 } from 'lucide-react';
 
 export default function ConvertPage() {
     const [file, setFile] = useState<File | null>(null);
@@ -73,7 +74,6 @@ export default function ConvertPage() {
                 }
             } catch { /* fallback below */ }
         }
-        // Fallback: client-side download from existing XML data
         const blob = new Blob([xml], { type: 'application/xml' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -86,7 +86,7 @@ export default function ConvertPage() {
     };
 
     const confidenceColor = (score: number) =>
-        score >= 0.95 ? 'var(--success)' : score >= 0.85 ? '#4ade80' : score >= 0.7 ? 'var(--warning)' : 'var(--danger)';
+        score >= 0.95 ? 'var(--success)' : score >= 0.85 ? '#22c55e' : score >= 0.7 ? 'var(--warning)' : 'var(--danger)';
 
     const renderFieldRow = (key: string, val: any) => (
         <tr key={key}>
@@ -105,7 +105,7 @@ export default function ConvertPage() {
                 </span>
             </td>
             <td style={{ width: '30px', textAlign: 'center' }}>
-                {val?.needsReview && <span title="Controle vereist">⚠️</span>}
+                {val?.needsReview && <AlertTriangle size={14} style={{ color: 'var(--warning)' }} />}
             </td>
         </tr>
     );
@@ -113,15 +113,16 @@ export default function ConvertPage() {
     return (
         <div>
             <div style={{ marginBottom: '32px' }}>
-                <h1 style={{ fontSize: '28px', fontWeight: 700, marginBottom: '8px' }}>PDF naar UBL Conversie</h1>
+                <h1 style={{ fontSize: '24px', fontWeight: 600, marginBottom: '6px' }}>PDF naar UBL Conversie</h1>
                 <p style={{ color: 'var(--muted)', fontSize: '14px' }}>Upload een PDF-factuur om te converteren naar UBL XML.</p>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-                {/* Left: Upload */}
                 <div>
                     <div className="card" style={{ marginBottom: '16px' }}>
-                        <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px' }}>📄 PDF Upload</h2>
+                        <h2 style={{ fontSize: '15px', fontWeight: 600, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Upload size={16} style={{ color: 'var(--primary)' }} /> PDF Upload
+                        </h2>
 
                         <div
                             className={`dropzone ${dragging ? 'active' : ''}`}
@@ -135,15 +136,15 @@ export default function ConvertPage() {
 
                             {file ? (
                                 <div>
-                                    <div style={{ fontSize: '40px', marginBottom: '12px' }}>✅</div>
+                                    <CheckCircle size={36} style={{ color: 'var(--success)', marginBottom: '10px' }} />
                                     <div style={{ fontWeight: 600, marginBottom: '4px' }}>{file.name}</div>
                                     <div style={{ color: 'var(--muted)', fontSize: '13px' }}>
-                                        {(file.size / 1024).toFixed(0)} KB • Klik om te wijzigen
+                                        {(file.size / 1024).toFixed(0)} KB — Klik om te wijzigen
                                     </div>
                                 </div>
                             ) : (
                                 <div>
-                                    <div style={{ fontSize: '40px', marginBottom: '12px' }}>📂</div>
+                                    <Upload size={36} style={{ color: 'var(--muted)', marginBottom: '10px' }} />
                                     <div style={{ fontWeight: 500, marginBottom: '4px' }}>Sleep uw PDF hierheen</div>
                                     <div style={{ color: 'var(--muted)', fontSize: '13px' }}>of klik om te selecteren (max 20MB)</div>
                                 </div>
@@ -151,9 +152,11 @@ export default function ConvertPage() {
                         </div>
                     </div>
 
-                    {/* Admin info */}
                     <div className="card">
-                        <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px' }}>🏢 Administratie Gegevens <span style={{ fontSize: '12px', fontWeight: 400, color: 'var(--muted)' }}>(optioneel)</span></h2>
+                        <h2 style={{ fontSize: '15px', fontWeight: 600, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Building2 size={16} style={{ color: 'var(--primary)' }} /> Administratie Gegevens
+                            <span style={{ fontSize: '12px', fontWeight: 400, color: 'var(--muted)' }}>(optioneel)</span>
+                        </h2>
                         <div style={{ display: 'grid', gap: '12px' }}>
                             <div>
                                 <label className="label">Administratienaam</label>
@@ -183,27 +186,27 @@ export default function ConvertPage() {
                     <button onClick={handleSubmit} className="btn-primary" disabled={!file || loading}
                         style={{ width: '100%', marginTop: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                         {loading && <div className="spinner" style={{ width: '16px', height: '16px', borderWidth: '2px' }} />}
-                        {loading ? 'Verwerken...' : '🚀 Converteren naar UBL'}
+                        {loading ? 'Verwerken...' : 'Converteren naar UBL'}
                     </button>
                 </div>
 
-                {/* Right: Results */}
                 <div>
                     {error && (
-                        <div className="card" style={{ borderColor: 'rgba(239, 68, 68, 0.3)', marginBottom: '16px' }}>
-                            <div style={{ color: 'var(--danger)', fontWeight: 600, marginBottom: '8px' }}>❌ Fout</div>
+                        <div className="card" style={{ borderColor: 'rgba(220, 38, 38, 0.2)', marginBottom: '16px' }}>
+                            <div style={{ color: 'var(--danger)', fontWeight: 600, marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <AlertTriangle size={16} /> Fout
+                            </div>
                             <div style={{ fontSize: '14px' }}>{error}</div>
                         </div>
                     )}
 
                     {result && (
                         <>
-                            {/* Status overview */}
                             <div className="card" style={{ marginBottom: '16px' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                                    <h2 style={{ fontSize: '16px', fontWeight: 600 }}>Resultaat</h2>
+                                    <h2 style={{ fontSize: '15px', fontWeight: 600 }}>Resultaat</h2>
                                     <span className={`badge ${result.status === 'completed' ? 'badge-success' : 'badge-warning'}`}>
-                                        {result.status === 'completed' ? '✅ Voltooid' : '⚠️ ' + result.status}
+                                        {result.status === 'completed' ? 'Voltooid' : result.status}
                                     </span>
                                 </div>
 
@@ -215,15 +218,13 @@ export default function ConvertPage() {
                                 </div>
                             </div>
 
-                            {/* Per invoice result */}
                             {result.results?.map((res: any, idx: number) => (
                                 <div key={idx}>
-                                    {/* Confidence header */}
                                     <div className="card" style={{ marginBottom: '16px' }}>
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                                            <h3 style={{ fontSize: '15px', fontWeight: 600 }}>Factuur {idx + 1}</h3>
+                                            <h3 style={{ fontSize: '14px', fontWeight: 600 }}>Factuur {idx + 1}</h3>
                                             <span style={{
-                                                fontSize: '24px', fontWeight: 700,
+                                                fontSize: '22px', fontWeight: 700,
                                                 color: confidenceColor(res.overallConfidence),
                                             }}>
                                                 {Math.round(res.overallConfidence * 100)}%
@@ -234,29 +235,30 @@ export default function ConvertPage() {
                                             <div className="confidence-fill" style={{
                                                 width: `${Math.round(res.overallConfidence * 100)}%`,
                                                 background: res.overallConfidence > 0.85
-                                                    ? 'linear-gradient(90deg, var(--success), #4ade80)'
-                                                    : 'linear-gradient(90deg, var(--warning), #fbbf24)',
+                                                    ? 'var(--success)'
+                                                    : 'var(--warning)',
                                             }} />
                                         </div>
 
                                         {res.flaggedFields?.length > 0 && (
                                             <div style={{
-                                                background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.2)',
-                                                borderRadius: '10px', padding: '12px', fontSize: '13px',
+                                                background: 'var(--warning-light)', border: '1px solid rgba(217, 119, 6, 0.15)',
+                                                borderRadius: '8px', padding: '10px 14px', fontSize: '13px',
+                                                display: 'flex', alignItems: 'center', gap: '8px',
                                             }}>
-                                                ⚠️ <strong>{res.flaggedFields.length} veld(en)</strong> vereisen controle: {res.flaggedFields.join(', ')}
+                                                <AlertTriangle size={14} style={{ color: 'var(--warning)', flexShrink: 0 }} />
+                                                <span><strong>{res.flaggedFields.length} veld(en)</strong> vereisen controle: {res.flaggedFields.join(', ')}</span>
                                             </div>
                                         )}
                                     </div>
 
-                                    {/* Grouped extracted data sections */}
                                     {Object.entries(FIELD_GROUPS).map(([groupName, fieldKeys]) => {
                                         const groupFields = fieldKeys.filter(k => res.extractedData?.[k] !== undefined);
                                         if (groupFields.length === 0) return null;
 
                                         return (
                                             <div key={groupName} className="card" style={{ marginBottom: '16px' }}>
-                                                <h4 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px', color: 'var(--primary)' }}>
+                                                <h4 style={{ fontSize: '13px', fontWeight: 600, marginBottom: '12px', color: 'var(--primary)' }}>
                                                     {groupName}
                                                 </h4>
                                                 <table className="table" style={{ fontSize: '13px' }}>
@@ -268,7 +270,6 @@ export default function ConvertPage() {
                                         );
                                     })}
 
-                                    {/* Other fields not in any group */}
                                     {(() => {
                                         const allGroupKeys = Object.values(FIELD_GROUPS).flat();
                                         const otherFields = Object.entries(res.extractedData || {}).filter(
@@ -278,7 +279,7 @@ export default function ConvertPage() {
 
                                         return (
                                             <div className="card" style={{ marginBottom: '16px' }}>
-                                                <h4 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px', color: 'var(--primary)' }}>
+                                                <h4 style={{ fontSize: '13px', fontWeight: 600, marginBottom: '12px', color: 'var(--primary)' }}>
                                                     Overige Velden
                                                 </h4>
                                                 <table className="table" style={{ fontSize: '13px' }}>
@@ -290,11 +291,10 @@ export default function ConvertPage() {
                                         );
                                     })()}
 
-                                    {/* Line Items */}
                                     {res.extractedData?.lineItems && Array.isArray(res.extractedData.lineItems) && res.extractedData.lineItems.length > 0 && (
                                         <div className="card" style={{ marginBottom: '16px' }}>
-                                            <h4 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px', color: 'var(--primary)' }}>
-                                                📋 Factuurregels ({res.extractedData.lineItems.length})
+                                            <h4 style={{ fontSize: '13px', fontWeight: 600, marginBottom: '12px', color: 'var(--primary)' }}>
+                                                Factuurregels ({res.extractedData.lineItems.length})
                                             </h4>
                                             <div style={{ overflowX: 'auto' }}>
                                                 <table className="table" style={{ fontSize: '12px' }}>
@@ -325,11 +325,10 @@ export default function ConvertPage() {
                                         </div>
                                     )}
 
-                                    {/* VAT Breakdown */}
                                     {res.extractedData?.vatBreakdown && Array.isArray(res.extractedData.vatBreakdown) && res.extractedData.vatBreakdown.length > 0 && (
                                         <div className="card" style={{ marginBottom: '16px' }}>
-                                            <h4 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px', color: 'var(--primary)' }}>
-                                                🧾 BTW Specificatie
+                                            <h4 style={{ fontSize: '13px', fontWeight: 600, marginBottom: '12px', color: 'var(--primary)' }}>
+                                                BTW Specificatie
                                             </h4>
                                             <table className="table" style={{ fontSize: '12px' }}>
                                                 <thead>
@@ -354,45 +353,43 @@ export default function ConvertPage() {
                                         </div>
                                     )}
 
-                                    {/* Actions: Download, Copy, View XML */}
                                     <div className="card" style={{ marginBottom: '16px' }}>
                                         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
                                             {res.ublXml && (
-                                                <button onClick={() => downloadUbl(res.ublXml, idx)} className="btn-primary" style={{ padding: '8px 16px', fontSize: '13px' }}>
-                                                    📥 Download UBL XML
+                                                <button onClick={() => downloadUbl(res.ublXml, idx)} className="btn-primary" style={{ padding: '8px 14px', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                                                    <Download size={14} /> Download UBL XML
                                                 </button>
                                             )}
-                                            <button onClick={() => navigator.clipboard.writeText(res.ublXml || '')} className="btn-secondary" style={{ padding: '8px 16px', fontSize: '13px' }}>
-                                                📋 Kopieer XML
+                                            <button onClick={() => navigator.clipboard.writeText(res.ublXml || '')} className="btn-secondary" style={{ padding: '8px 14px', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                                                <Copy size={14} /> Kopieer XML
                                             </button>
                                             {res.ublXml && (
-                                                <button onClick={() => setShowXml(!showXml)} className="btn-secondary" style={{ padding: '8px 16px', fontSize: '13px' }}>
-                                                    {showXml ? '🔽 Verberg XML' : '📄 Toon UBL XML'}
+                                                <button onClick={() => setShowXml(!showXml)} className="btn-secondary" style={{ padding: '8px 14px', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                                                    {showXml ? <><EyeOff size={14} /> Verberg XML</> : <><Eye size={14} /> Toon UBL XML</>}
                                                 </button>
                                             )}
 
-                                            {/* Validation badge */}
                                             {res.validationResult && (
                                                 <span className={`badge ${res.validationResult.isValid ? 'badge-success' : 'badge-danger'}`} style={{ marginLeft: 'auto' }}>
-                                                    {res.validationResult.isValid ? '✅ Valid UBL (Peppol BIS 3.0)' : '❌ Validatiefouten'}
+                                                    {res.validationResult.isValid ? 'Valid UBL (Peppol BIS 3.0)' : 'Validatiefouten'}
                                                 </span>
                                             )}
                                         </div>
 
-                                        {/* Expandable XML view */}
                                         {showXml && res.ublXml && (
                                             <div style={{ marginTop: '12px' }}>
                                                 <pre style={{
-                                                    background: 'rgba(0,0,0,0.3)',
-                                                    border: '1px solid rgba(255,255,255,0.1)',
-                                                    borderRadius: '8px',
-                                                    padding: '16px',
+                                                    background: '#f1f3f5',
+                                                    border: '1px solid var(--border)',
+                                                    borderRadius: '6px',
+                                                    padding: '14px',
                                                     fontSize: '11px',
                                                     lineHeight: '1.5',
                                                     maxHeight: '400px',
                                                     overflow: 'auto',
                                                     whiteSpace: 'pre-wrap',
                                                     wordBreak: 'break-all',
+                                                    color: 'var(--foreground)',
                                                 }}>
                                                     {res.ublXml}
                                                 </pre>
@@ -406,7 +403,7 @@ export default function ConvertPage() {
 
                     {!result && !error && (
                         <div className="card" style={{ textAlign: 'center', padding: '64px 24px', color: 'var(--muted)' }}>
-                            <div style={{ fontSize: '48px', marginBottom: '16px' }}>📋</div>
+                            <Upload size={40} style={{ color: 'var(--border)', marginBottom: '12px' }} />
                             <p>Upload een PDF om het resultaat hier te zien</p>
                         </div>
                     )}

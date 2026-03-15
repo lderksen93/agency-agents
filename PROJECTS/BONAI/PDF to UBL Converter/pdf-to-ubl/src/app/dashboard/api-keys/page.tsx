@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Key, Copy, CircleCheck as CheckCircle } from 'lucide-react';
 
 interface ApiKeyItem {
     id: string;
@@ -57,36 +58,34 @@ export default function ApiKeysPage() {
     return (
         <div>
             <div style={{ marginBottom: '32px' }}>
-                <h1 style={{ fontSize: '28px', fontWeight: 700, marginBottom: '8px' }}>API Keys</h1>
+                <h1 style={{ fontSize: '24px', fontWeight: 600, marginBottom: '6px' }}>API Keys</h1>
                 <p style={{ color: 'var(--muted)', fontSize: '14px' }}>
                     Beheer uw API keys voor programmatische toegang tot de conversie-API.
                 </p>
             </div>
 
-            {/* New key displayed */}
             {newKey && (
-                <div className="card" style={{ marginBottom: '24px', borderColor: 'rgba(34, 197, 94, 0.3)' }}>
-                    <div style={{ fontWeight: 600, marginBottom: '8px', color: 'var(--success)' }}>
-                        ✅ Nieuwe API Key Aangemaakt
+                <div className="card" style={{ marginBottom: '24px', borderColor: 'rgba(22, 163, 74, 0.3)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, marginBottom: '8px', color: 'var(--success)' }}>
+                        <CheckCircle size={16} /> Nieuwe API Key Aangemaakt
                     </div>
                     <p style={{ fontSize: '13px', color: 'var(--muted)', marginBottom: '12px' }}>
-                        Kopieer deze key nu — deze wordt slechts één keer getoond.
+                        Kopieer deze key nu — deze wordt slechts een keer getoond.
                     </p>
                     <div style={{
-                        background: 'var(--background)', borderRadius: '8px', padding: '12px',
+                        background: 'var(--background)', borderRadius: '6px', padding: '10px 12px',
                         fontFamily: 'monospace', fontSize: '13px', wordBreak: 'break-all',
                         border: '1px solid var(--border)',
                     }}>
                         {newKey}
                     </div>
                     <button onClick={() => { navigator.clipboard.writeText(newKey); }}
-                        className="btn-secondary" style={{ marginTop: '12px', padding: '8px 16px', fontSize: '12px' }}>
-                        📋 Kopieer Key
+                        className="btn-secondary" style={{ marginTop: '12px', padding: '8px 14px', fontSize: '12px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                        <Copy size={12} /> Kopieer Key
                     </button>
                 </div>
             )}
 
-            {/* Create new key */}
             <div className="card" style={{ marginBottom: '24px' }}>
                 <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px' }}>Nieuwe API Key</h2>
                 <div style={{ display: 'flex', gap: '12px', alignItems: 'end' }}>
@@ -102,7 +101,6 @@ export default function ApiKeysPage() {
                 </div>
             </div>
 
-            {/* Existing keys */}
             <div className="card">
                 <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px' }}>Bestaande Keys</h2>
 
@@ -112,7 +110,8 @@ export default function ApiKeysPage() {
                     </div>
                 ) : keys.length === 0 ? (
                     <div style={{ textAlign: 'center', padding: '32px', color: 'var(--muted)' }}>
-                        Nog geen API keys aangemaakt
+                        <Key size={32} style={{ color: 'var(--border)', marginBottom: '8px' }} />
+                        <p>Nog geen API keys aangemaakt</p>
                     </div>
                 ) : (
                     <table className="table">
@@ -153,12 +152,11 @@ export default function ApiKeysPage() {
                 )}
             </div>
 
-            {/* API Usage info */}
             <div className="card" style={{ marginTop: '24px' }}>
                 <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '12px' }}>API Gebruik</h2>
-                <div style={{ background: 'var(--background)', borderRadius: '8px', padding: '16px', fontFamily: 'monospace', fontSize: '13px', lineHeight: 1.8 }}>
+                <div style={{ background: 'var(--background)', borderRadius: '6px', padding: '14px', fontFamily: 'monospace', fontSize: '13px', lineHeight: 1.8, border: '1px solid var(--border)' }}>
                     <div style={{ color: 'var(--muted)' }}># Conversie starten</div>
-                    <div>curl -X POST https://app.procai.nl/api/v1/convert \</div>
+                    <div>curl -X POST https://app.bonai.nl/api/v1/convert \</div>
                     <div style={{ paddingLeft: '16px' }}>-H &quot;Authorization: Bearer prc_sk_...&quot; \</div>
                     <div style={{ paddingLeft: '16px' }}>-F &quot;file=@factuur.pdf&quot;</div>
                 </div>

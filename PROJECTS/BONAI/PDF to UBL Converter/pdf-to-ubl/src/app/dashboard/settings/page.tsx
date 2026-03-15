@@ -1,8 +1,10 @@
+import { Lock, Globe } from 'lucide-react';
+
 export default function DashboardSettingsPage() {
     return (
         <div>
             <div style={{ marginBottom: '32px' }}>
-                <h1 style={{ fontSize: '28px', fontWeight: 700, marginBottom: '8px' }}>⚙️ Instellingen</h1>
+                <h1 style={{ fontSize: '24px', fontWeight: 600, marginBottom: '6px' }}>Instellingen</h1>
                 <p style={{ color: 'var(--muted)', fontSize: '14px' }}>Organisatie instellingen en voorkeuren.</p>
             </div>
 
@@ -34,9 +36,10 @@ export default function DashboardSettingsPage() {
                 <button className="btn-primary" style={{ marginTop: '16px' }}>Opslaan</button>
             </div>
 
-            <div className="zero-data-banner">
-                🔒 <strong>Zero Data Retention</strong> — Uw documenten worden nooit opgeslagen.
-                🇪🇺 Alle verwerking op Europese servers.
+            <div className="compliance-banner">
+                <Lock size={14} style={{ color: 'var(--success)', flexShrink: 0 }} />
+                <span><strong>Zero Data Retention</strong> — Uw documenten worden nooit opgeslagen. Alle verwerking op Europese servers.</span>
+                <Globe size={14} style={{ color: 'var(--primary)', flexShrink: 0 }} />
             </div>
         </div>
     );

@@ -62,33 +62,20 @@ export default function RegisterPage() {
     return (
         <div style={{
             minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            position: 'relative', overflow: 'hidden',
+            background: 'var(--background)',
         }}>
-            <div style={{
-                position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-                width: '600px', height: '600px', borderRadius: '50%',
-                background: 'radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%)',
-                pointerEvents: 'none',
-            }} />
-
-            <div className="card" style={{ width: '100%', maxWidth: '420px', position: 'relative' }}>
-                <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-                    <div style={{
-                        width: '48px', height: '48px', borderRadius: '14px',
-                        background: 'linear-gradient(135deg, var(--primary), #8b5cf6)',
-                        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                        fontWeight: 800, fontSize: '20px', color: 'white', marginBottom: '16px',
-                    }}>P</div>
-                    <h1 style={{ fontSize: '24px', fontWeight: 700 }}>Account Aanmaken</h1>
-                    <p style={{ color: 'var(--muted)', fontSize: '14px', marginTop: '8px' }}>
+            <div className="card" style={{ width: '100%', maxWidth: '400px' }}>
+                <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+                    <div style={{ fontWeight: 700, fontSize: '22px', marginBottom: '4px' }}>Bonai</div>
+                    <p style={{ color: 'var(--muted)', fontSize: '14px' }}>
                         Start met 1000 gratis credits
                     </p>
                 </div>
 
                 {error && (
                     <div style={{
-                        background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)',
-                        borderRadius: '10px', padding: '12px', marginBottom: '20px',
+                        background: 'var(--danger-light)', border: '1px solid rgba(220, 38, 38, 0.15)',
+                        borderRadius: '8px', padding: '10px 14px', marginBottom: '20px',
                         color: 'var(--danger)', fontSize: '13px', textAlign: 'center',
                     }}>{error}</div>
                 )}
@@ -131,7 +118,7 @@ export default function RegisterPage() {
                     </button>
                 </form>
 
-                <p style={{ textAlign: 'center', marginTop: '24px', fontSize: '13px', color: 'var(--muted)' }}>
+                <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '13px', color: 'var(--muted)' }}>
                     Al een account? <Link href="/login" style={{ color: 'var(--primary)' }}>Inloggen</Link>
                 </p>
             </div>

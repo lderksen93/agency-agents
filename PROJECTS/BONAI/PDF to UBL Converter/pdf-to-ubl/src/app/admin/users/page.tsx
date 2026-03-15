@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { CircleAlert as AlertCircle } from 'lucide-react';
 
 interface UserItem {
     id: string;
@@ -64,17 +65,20 @@ export default function AdminUsersPage() {
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
                 <div>
-                    <h1 style={{ fontSize: '28px', fontWeight: 700, marginBottom: '8px' }}>👥 Gebruikersbeheer</h1>
+                    <h1 style={{ fontSize: '24px', fontWeight: 600, marginBottom: '6px' }}>Gebruikersbeheer</h1>
                     <p style={{ color: 'var(--muted)', fontSize: '14px' }}>Beheer gebruikers en rollen binnen uw organisatie.</p>
                 </div>
                 <button onClick={() => setShowCreate(!showCreate)} className="btn-primary">+ Gebruiker Toevoegen</button>
             </div>
 
-            {/* Create form */}
             {showCreate && (
                 <div className="card" style={{ marginBottom: '24px' }}>
                     <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px' }}>Nieuwe Gebruiker</h2>
-                    {error && <div style={{ color: 'var(--danger)', marginBottom: '12px', fontSize: '13px' }}>❌ {error}</div>}
+                    {error && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--danger)', marginBottom: '12px', fontSize: '13px' }}>
+                            <AlertCircle size={14} /> {error}
+                        </div>
+                    )}
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                         <div>
                             <label className="label">E-mail</label>
@@ -107,7 +111,6 @@ export default function AdminUsersPage() {
                 </div>
             )}
 
-            {/* Users table */}
             <div className="card">
                 {loading ? (
                     <div style={{ textAlign: 'center', padding: '32px' }}><div className="spinner" style={{ margin: '0 auto' }} /></div>

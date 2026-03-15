@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Check, Lock, Globe } from 'lucide-react';
 
 interface ModelInfo {
     id: string;
@@ -35,7 +36,6 @@ export default function AiConfigPage() {
             .catch(() => { });
     }, []);
 
-    // Load models when OpenRouter is selected
     useEffect(() => {
         if (config.aiProvider === 'openrouter' && models.length === 0) {
             setLoadingModels(true);
@@ -78,11 +78,10 @@ export default function AiConfigPage() {
     return (
         <div>
             <div style={{ marginBottom: '32px' }}>
-                <h1 style={{ fontSize: '28px', fontWeight: 700, marginBottom: '8px' }}>🤖 AI Provider Configuratie</h1>
+                <h1 style={{ fontSize: '24px', fontWeight: 600, marginBottom: '6px' }}>AI Provider Configuratie</h1>
                 <p style={{ color: 'var(--muted)', fontSize: '14px' }}>Kies uw AI-provider en configureer de instellingen.</p>
             </div>
 
-            {/* Provider selection */}
             <div className="card" style={{ marginBottom: '24px' }}>
                 <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px' }}>Provider Selectie</h2>
                 <div style={{ display: 'flex', gap: '16px' }}>
@@ -95,7 +94,7 @@ export default function AiConfigPage() {
                             className="card" style={{
                                 flex: 1, cursor: 'pointer',
                                 borderColor: config.aiProvider === provider.value ? 'var(--primary)' : 'var(--border)',
-                                background: config.aiProvider === provider.value ? 'var(--primary-glow)' : 'var(--card)',
+                                background: config.aiProvider === provider.value ? 'var(--primary-light)' : '#ffffff',
                             }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                                 <div style={{
@@ -115,7 +114,6 @@ export default function AiConfigPage() {
                 </div>
             </div>
 
-            {/* Provider-specific config */}
             {config.aiProvider === 'document_ai' ? (
                 <div className="card" style={{ marginBottom: '24px' }}>
                     <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px' }}>Google Document AI Instellingen</h2>
@@ -155,18 +153,15 @@ export default function AiConfigPage() {
                                 onChange={(e) => setConfig({ ...config, openrouterApiKey: e.target.value })} />
                         </div>
 
-                        {/* Model selection */}
                         <div>
                             <label className="label">AI Model</label>
-                            <div style={{ position: 'relative' }}>
-                                <input
-                                    className="input"
-                                    placeholder="Zoek model..."
-                                    value={modelSearch}
-                                    onChange={(e) => setModelSearch(e.target.value)}
-                                    style={{ marginBottom: '8px' }}
-                                />
-                            </div>
+                            <input
+                                className="input"
+                                placeholder="Zoek model..."
+                                value={modelSearch}
+                                onChange={(e) => setModelSearch(e.target.value)}
+                                style={{ marginBottom: '8px' }}
+                            />
 
                             {loadingModels ? (
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px', color: 'var(--muted)' }}>
@@ -176,7 +171,7 @@ export default function AiConfigPage() {
                             ) : (
                                 <div style={{
                                     maxHeight: '400px', overflow: 'auto',
-                                    border: '1px solid var(--border)', borderRadius: '10px',
+                                    border: '1px solid var(--border)', borderRadius: '8px',
                                 }}>
                                     {filteredModels.length === 0 && (
                                         <div style={{ padding: '16px', textAlign: 'center', color: 'var(--muted)', fontSize: '13px' }}>
@@ -190,18 +185,18 @@ export default function AiConfigPage() {
                                             style={{
                                                 padding: '10px 14px',
                                                 cursor: 'pointer',
-                                                borderBottom: '1px solid var(--border)',
-                                                background: config.openrouterModel === m.id ? 'var(--primary-glow)' : 'transparent',
+                                                borderBottom: '1px solid var(--border-light)',
+                                                background: config.openrouterModel === m.id ? 'var(--primary-light)' : 'transparent',
                                                 transition: 'background 0.15s',
                                             }}
-                                            onMouseEnter={(e) => { if (config.openrouterModel !== m.id) e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; }}
+                                            onMouseEnter={(e) => { if (config.openrouterModel !== m.id) e.currentTarget.style.background = 'var(--card-hover)'; }}
                                             onMouseLeave={(e) => { if (config.openrouterModel !== m.id) e.currentTarget.style.background = 'transparent'; }}
                                         >
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                                 <div>
                                                     <div style={{ fontWeight: 500, fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                                                         {config.openrouterModel === m.id && (
-                                                            <span style={{ color: 'var(--primary)' }}>✓</span>
+                                                            <Check size={14} style={{ color: 'var(--primary)' }} />
                                                         )}
                                                         {m.name}
                                                     </div>
@@ -224,23 +219,22 @@ export default function AiConfigPage() {
                             )}
                         </div>
 
-                        {/* Selected model info */}
                         {selectedModel && (
                             <div style={{
-                                background: 'rgba(139, 92, 246, 0.08)',
-                                border: '1px solid rgba(139, 92, 246, 0.2)',
-                                borderRadius: '10px',
+                                background: 'var(--primary-light)',
+                                border: '1px solid rgba(0, 102, 204, 0.15)',
+                                borderRadius: '8px',
                                 padding: '12px',
                                 fontSize: '13px',
                             }}>
-                                <div style={{ fontWeight: 600, marginBottom: '6px' }}>
-                                    ✓ Geselecteerd: {selectedModel.name}
+                                <div style={{ fontWeight: 600, marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <Check size={14} style={{ color: 'var(--primary)' }} /> Geselecteerd: {selectedModel.name}
                                 </div>
                                 <div style={{ display: 'flex', gap: '16px', color: 'var(--muted)', fontSize: '12px' }}>
-                                    <span>📥 Input: {formatPrice(selectedModel.promptPrice)}</span>
-                                    <span>📤 Output: {formatPrice(selectedModel.completionPrice)}</span>
-                                    <span>📏 Context: {(selectedModel.contextLength / 1000).toFixed(0)}K</span>
-                                    <span>🖼️ {selectedModel.modality}</span>
+                                    <span>Input: {formatPrice(selectedModel.promptPrice)}</span>
+                                    <span>Output: {formatPrice(selectedModel.completionPrice)}</span>
+                                    <span>Context: {(selectedModel.contextLength / 1000).toFixed(0)}K</span>
+                                    <span>{selectedModel.modality}</span>
                                 </div>
                             </div>
                         )}
@@ -248,9 +242,10 @@ export default function AiConfigPage() {
                 </div>
             )}
 
-            {/* EU compliance banner */}
-            <div className="zero-data-banner" style={{ marginBottom: '24px' }}>
-                🇪🇺 Alle verwerking vindt plaats op Europese servers via OpenRouter EU routing. Wij hanteren <strong>Zero Data Retention</strong> — geen documenten worden opgeslagen na verwerking.
+            <div className="compliance-banner" style={{ marginBottom: '24px' }}>
+                <Globe size={14} style={{ color: 'var(--primary)', flexShrink: 0 }} />
+                <span>Alle verwerking vindt plaats op Europese servers via OpenRouter EU routing. Wij hanteren <strong>Zero Data Retention</strong> — geen documenten worden opgeslagen na verwerking.</span>
+                <Lock size={14} style={{ color: 'var(--success)', flexShrink: 0 }} />
             </div>
 
             <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
@@ -259,7 +254,7 @@ export default function AiConfigPage() {
                     {saving && <div className="spinner" style={{ width: '14px', height: '14px', borderWidth: '2px' }} />}
                     {saving ? 'Opslaan...' : 'Configuratie Opslaan'}
                 </button>
-                {saved && <span style={{ color: 'var(--success)', fontSize: '13px' }}>✅ Opgeslagen</span>}
+                {saved && <span style={{ color: 'var(--success)', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '4px' }}><Check size={14} /> Opgeslagen</span>}
             </div>
         </div>
     );

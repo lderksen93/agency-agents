@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { FIELD_LABELS, FIELD_GROUPS } from '@/lib/ubl-field-labels';
+import { TriangleAlert as AlertTriangle, Download, Copy, Eye, EyeOff, ArrowLeft, CircleCheck as CheckCircle, Circle as XCircle, Clock } from 'lucide-react';
 
 export default function ResultsPage() {
     const params = useParams();
@@ -22,7 +23,7 @@ export default function ResultsPage() {
     }, [id]);
 
     const confidenceColor = (score: number) =>
-        score >= 0.95 ? 'var(--success)' : score >= 0.85 ? '#4ade80' : score >= 0.7 ? 'var(--warning)' : 'var(--danger)';
+        score >= 0.95 ? 'var(--success)' : score >= 0.85 ? '#22c55e' : score >= 0.7 ? 'var(--warning)' : 'var(--danger)';
 
     const downloadUbl = async (xml: string, index: number) => {
         const filename = `${(data?.originalFilename || 'factuur').replace(/\.pdf$/i, '')}_ubl_${index}.xml`;
@@ -40,7 +41,6 @@ export default function ResultsPage() {
                 setTimeout(() => URL.revokeObjectURL(url), 5000);
             }
         } catch {
-            // Fallback: direct navigation
             window.location.href = `/api/v1/convert/${data?.id}/download?index=${index}`;
         }
     };
@@ -54,44 +54,49 @@ export default function ResultsPage() {
 
     if (error) return (
         <div className="card" style={{ maxWidth: '500px', margin: '48px auto', textAlign: 'center' }}>
-            <div style={{ fontSize: '48px', marginBottom: '16px' }}>❌</div>
+            <XCircle size={40} style={{ color: 'var(--danger)', marginBottom: '12px' }} />
             <p style={{ fontWeight: 600 }}>{error}</p>
-            <Link href="/dashboard" style={{ color: 'var(--primary)', marginTop: '16px', display: 'inline-block' }}>← Terug naar dashboard</Link>
+            <Link href="/dashboard" style={{ color: 'var(--primary)', marginTop: '16px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                <ArrowLeft size={14} /> Terug naar dashboard
+            </Link>
         </div>
     );
 
     if (!data) return null;
 
-    const statusMap: Record<string, { class: string; label: string }> = {
-        completed: { class: 'badge-success', label: '✅ Voltooid' },
-        failed: { class: 'badge-danger', label: '❌ Mislukt' },
-        flagged: { class: 'badge-warning', label: '⚠️ Gemarkeerd' },
-        processing: { class: 'badge-info', label: '⏳ Verwerken' },
+    const statusMap: Record<string, { class: string; label: string; icon: any }> = {
+        completed: { class: 'badge-success', label: 'Voltooid', icon: CheckCircle },
+        failed: { class: 'badge-danger', label: 'Mislukt', icon: XCircle },
+        flagged: { class: 'badge-warning', label: 'Gemarkeerd', icon: AlertTriangle },
+        processing: { class: 'badge-info', label: 'Verwerken', icon: Clock },
     };
-    const status = statusMap[data.status] || { class: 'badge-info', label: data.status };
+    const status = statusMap[data.status] || { class: 'badge-info', label: data.status, icon: Clock };
+    const StatusIcon = status.icon;
 
     return (
         <div>
-            {/* Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                 <div>
-                    <Link href="/dashboard" style={{ color: 'var(--muted)', fontSize: '13px' }}>← Terug naar dashboard</Link>
-                    <h1 style={{ fontSize: '24px', fontWeight: 700, marginTop: '8px' }}>{data.originalFilename}</h1>
+                    <Link href="/dashboard" style={{ color: 'var(--muted)', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <ArrowLeft size={14} /> Terug naar dashboard
+                    </Link>
+                    <h1 style={{ fontSize: '22px', fontWeight: 600, marginTop: '8px' }}>{data.originalFilename}</h1>
                     <p style={{ color: 'var(--muted)', fontSize: '13px' }}>
-                        {new Date(data.createdAt).toLocaleString('nl-NL')} • {data.processingTimeMs ? `${(data.processingTimeMs / 1000).toFixed(1)}s` : ''}
+                        {new Date(data.createdAt).toLocaleString('nl-NL')} {data.processingTimeMs ? `— ${(data.processingTimeMs / 1000).toFixed(1)}s` : ''}
                     </p>
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                    <span className={`badge ${status.class}`} style={{ marginBottom: '8px', display: 'inline-block' }}>{status.label}</span>
+                    <span className={`badge ${status.class}`} style={{ marginBottom: '8px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <StatusIcon size={12} /> {status.label}
+                    </span>
                     {data.overallConfidence != null && (
-                        <div style={{ fontSize: '32px', fontWeight: 700, color: confidenceColor(data.overallConfidence) }}>
+                        <div style={{ fontSize: '28px', fontWeight: 700, color: confidenceColor(data.overallConfidence) }}>
                             {Math.round(data.overallConfidence * 100)}%
                         </div>
                     )}
                 </div>
             </div>
 
-            {/* Stats row */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px', marginBottom: '24px' }}>
                 {[
                     { label: 'Type', value: data.documentType || '—' },
@@ -101,30 +106,28 @@ export default function ResultsPage() {
                     { label: 'AI Provider', value: data.flagReason || 'OpenRouter' },
                 ].map((s, i) => (
                     <div key={i} className="card" style={{ padding: '12px' }}>
-                        <div style={{ fontSize: '11px', color: 'var(--muted)', textTransform: 'uppercase', marginBottom: '4px' }}>{s.label}</div>
-                        <div style={{ fontSize: '16px', fontWeight: 600 }}>{s.value}</div>
+                        <div style={{ fontSize: '11px', color: 'var(--muted)', marginBottom: '4px' }}>{s.label}</div>
+                        <div style={{ fontSize: '15px', fontWeight: 600 }}>{s.value}</div>
                     </div>
                 ))}
             </div>
 
-            {/* Results */}
             {(data.results || []).map((res: any, idx: number) => (
                 <div key={idx}>
-                    {/* Confidence */}
                     {res.flaggedFields?.length > 0 && (
-                        <div className="card" style={{ marginBottom: '16px', borderColor: 'rgba(245, 158, 11, 0.3)' }}>
-                            ⚠️ <strong>{res.flaggedFields.length} veld(en)</strong> vereisen controle: {res.flaggedFields.join(', ')}
+                        <div className="card" style={{ marginBottom: '16px', borderColor: 'rgba(217, 119, 6, 0.2)', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+                            <AlertTriangle size={14} style={{ color: 'var(--warning)', flexShrink: 0 }} />
+                            <span><strong>{res.flaggedFields.length} veld(en)</strong> vereisen controle: {res.flaggedFields.join(', ')}</span>
                         </div>
                     )}
 
-                    {/* Grouped fields */}
                     {Object.entries(FIELD_GROUPS).map(([groupName, fieldKeys]) => {
                         const groupFields = fieldKeys.filter(k => res.extractedData?.[k] !== undefined);
                         if (groupFields.length === 0) return null;
 
                         return (
                             <div key={groupName} className="card" style={{ marginBottom: '16px' }}>
-                                <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px', color: 'var(--primary)' }}>
+                                <h3 style={{ fontSize: '13px', fontWeight: 600, marginBottom: '12px', color: 'var(--primary)' }}>
                                     {groupName}
                                 </h3>
                                 <table className="table" style={{ fontSize: '13px' }}>
@@ -145,7 +148,7 @@ export default function ResultsPage() {
                                                         </span>
                                                     </td>
                                                     <td style={{ width: '30px', textAlign: 'center' }}>
-                                                        {val?.needsReview && '⚠️'}
+                                                        {val?.needsReview && <AlertTriangle size={14} style={{ color: 'var(--warning)' }} />}
                                                     </td>
                                                 </tr>
                                             );
@@ -156,7 +159,6 @@ export default function ResultsPage() {
                         );
                     })}
 
-                    {/* Other fields */}
                     {(() => {
                         const allGroupKeys = Object.values(FIELD_GROUPS).flat();
                         const otherFields = Object.entries(res.extractedData || {}).filter(
@@ -166,7 +168,7 @@ export default function ResultsPage() {
 
                         return (
                             <div className="card" style={{ marginBottom: '16px' }}>
-                                <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px', color: 'var(--primary)' }}>
+                                <h3 style={{ fontSize: '13px', fontWeight: 600, marginBottom: '12px', color: 'var(--primary)' }}>
                                     Overige Velden
                                 </h3>
                                 <table className="table" style={{ fontSize: '13px' }}>
@@ -180,7 +182,7 @@ export default function ResultsPage() {
                                                         {Math.round((val?.confidence || 0) * 100)}%
                                                     </span>
                                                 </td>
-                                                <td style={{ width: '30px' }}>{val?.needsReview && '⚠️'}</td>
+                                                <td style={{ width: '30px' }}>{val?.needsReview && <AlertTriangle size={14} style={{ color: 'var(--warning)' }} />}</td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -189,11 +191,10 @@ export default function ResultsPage() {
                         );
                     })()}
 
-                    {/* Line Items */}
                     {res.extractedData?.lineItems?.length > 0 && (
                         <div className="card" style={{ marginBottom: '16px' }}>
-                            <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px', color: 'var(--primary)' }}>
-                                📋 Factuurregels ({res.extractedData.lineItems.length})
+                            <h3 style={{ fontSize: '13px', fontWeight: 600, marginBottom: '12px', color: 'var(--primary)' }}>
+                                Factuurregels ({res.extractedData.lineItems.length})
                             </h3>
                             <div style={{ overflowX: 'auto' }}>
                                 <table className="table" style={{ fontSize: '12px' }}>
@@ -224,11 +225,10 @@ export default function ResultsPage() {
                         </div>
                     )}
 
-                    {/* VAT Breakdown */}
                     {res.extractedData?.vatBreakdown?.length > 0 && (
                         <div className="card" style={{ marginBottom: '16px' }}>
-                            <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px', color: 'var(--primary)' }}>
-                                🧾 BTW Specificatie
+                            <h3 style={{ fontSize: '13px', fontWeight: 600, marginBottom: '12px', color: 'var(--primary)' }}>
+                                BTW Specificatie
                             </h3>
                             <table className="table" style={{ fontSize: '12px' }}>
                                 <thead>
@@ -253,35 +253,35 @@ export default function ResultsPage() {
                         </div>
                     )}
 
-                    {/* Actions */}
                     <div className="card" style={{ marginBottom: '16px' }}>
                         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
                             {res.ublXml && (
-                                <button onClick={() => downloadUbl(res.ublXml, idx)} className="btn-primary" style={{ padding: '8px 16px', fontSize: '13px' }}>
-                                    📥 Download UBL XML
+                                <button onClick={() => downloadUbl(res.ublXml, idx)} className="btn-primary" style={{ padding: '8px 14px', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                                    <Download size={14} /> Download UBL XML
                                 </button>
                             )}
-                            <button onClick={() => navigator.clipboard.writeText(res.ublXml || '')} className="btn-secondary" style={{ padding: '8px 16px', fontSize: '13px' }}>
-                                📋 Kopieer XML
+                            <button onClick={() => navigator.clipboard.writeText(res.ublXml || '')} className="btn-secondary" style={{ padding: '8px 14px', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                                <Copy size={14} /> Kopieer XML
                             </button>
                             {res.ublXml && (
-                                <button onClick={() => setShowXml(!showXml)} className="btn-secondary" style={{ padding: '8px 16px', fontSize: '13px' }}>
-                                    {showXml ? '🔽 Verberg XML' : '📄 Toon UBL XML'}
+                                <button onClick={() => setShowXml(!showXml)} className="btn-secondary" style={{ padding: '8px 14px', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                                    {showXml ? <><EyeOff size={14} /> Verberg XML</> : <><Eye size={14} /> Toon UBL XML</>}
                                 </button>
                             )}
                             {res.isValid != null && (
                                 <span className={`badge ${res.isValid ? 'badge-success' : 'badge-danger'}`} style={{ marginLeft: 'auto' }}>
-                                    {res.isValid ? '✅ Valid UBL (Peppol BIS 3.0)' : '❌ Validatiefouten'}
+                                    {res.isValid ? 'Valid UBL (Peppol BIS 3.0)' : 'Validatiefouten'}
                                 </span>
                             )}
                         </div>
 
                         {showXml && res.ublXml && (
                             <pre style={{
-                                marginTop: '12px', background: 'rgba(0,0,0,0.3)',
-                                border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px',
-                                padding: '16px', fontSize: '11px', lineHeight: '1.5',
+                                marginTop: '12px', background: '#f1f3f5',
+                                border: '1px solid var(--border)', borderRadius: '6px',
+                                padding: '14px', fontSize: '11px', lineHeight: '1.5',
                                 maxHeight: '400px', overflow: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all',
+                                color: 'var(--foreground)',
                             }}>
                                 {res.ublXml}
                             </pre>
